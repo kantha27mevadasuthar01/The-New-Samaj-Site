@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Kantha 27 Mevada Suthar Samaj{% endblock %}</title>
+    {% load static %}
+
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+
+    <style>
+        /* ===============================
+           BODY & BACKGROUND
+        ================================= */
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            color: #333;
+        }
+
+        body.home-bg {
+            background: url("{% static 'images/home-bg.jpg' %}") no-repeat center center fixed;
+            background-size: cover;
+        }
+
+        body.dark {
+            background-color: #121212;
+            color: #fff;
+            background-image: none;
+        }
+
+        /* ===============================
+           NAVBAR
+        ================================= */
+        nav.navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            background-color: #ff8c00;
+            color: #fff;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 2px solid #e69500;
+        }
+
+        .nav-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .nav-left img.logo { height: 40px; }
+
+        .site-title {
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .nav-center a {
+            color: #fff;
+            text-decoration: none;
+            margin: 0 8px;
+            padding: 6px 12px;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+
+        .nav-center a:hover {
+            background-color: #155a87;
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .nav-right input.search {
+            padding: 4px 8px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+        }
+
+        .nav-right button,
+        .nav-right a {
+            padding: 5px 10px;
+            border-radius: 4px;
+            border: none;
+            background-color: #fff;
+            color: #ff8c00;
+            font-weight: bold;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .nav-right button:hover,
+        .nav-right a:hover {
+            background-color: #ffd27f;
+        }
+
+        /* ===============================
+           HAMBURGER
+        ================================= */
+        .hamburger {
+            display: none;
+            font-size: 26px;
+            background: none;
+            border: none;
+            color: #fff;
+            cursor: pointer;
+        }
+
+        /* ===============================
+           MESSAGES
+        ================================= */
+        .messages-container {
+            position: fixed;
+            top: 70px;
+            right: 20px;
+            z-index: 2000;
+        }
+
+        .alert {
+            padding: 10px 15px;
+            margin-bottom: 8px;
+            border-radius: 5px;
+            font-weight: bold;
+            background: #333;
+            color: #fff;
+            animation: fadeOut 4s forwards;
+        }
+
+        .alert.success { background: #28a745; }
+        .alert.error { background: #dc3545; }
+        .alert.warning { background: #ffc107; color: #000; }
+
+        @keyframes fadeOut {
+            0% { opacity: 1; }
+            80% { opacity: 1; }
+            100% { opacity: 0; display: none; }
+        }
+
+        /* ===============================
+           RESPONSIVE
+        ================================= */
+        @media (max-width: 900px) {
+            .hamburger { display: block; }
+
+            .nav-center,
+            .nav-right {
+                display: none;
+                flex-direction: column;
+                width: 100%;
+                background: linear-gradient(135deg, #ff8c00, #ffb347);
+                margin-top: 10px;
+                border-radius: 6px;
+                padding: 10px 0;
+            }
+
+            .nav-center.active,
+            .nav-right.active {
+                display: flex;
+            }
+
+            .nav-center a,
+            .nav-right a,
+            .nav-right button,
+            .nav-right input {
+                width: 90%;
+                margin: 5px auto;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+
+<body class="{% block body_class %}{% endblock %}">
+
+<nav class="navbar">
+    <!-- LEFT -->
+    <div class="nav-left">
+        <img src="{% static 'images/logo.png' %}" class="logo" alt="Logo">
+        <span class="site-title">Kantha 27 Mevada Suthar Samaj</span>
+    </div>
+
+    <!-- HAMBURGER -->
+    <button class="hamburger" onclick="toggleMenu()">☰</button>
+
+    <!-- CENTER -->
+    <div class="nav-center">
+        <a href="{% url 'home' %}">Home</a>
+        <a href="/photos/">Photos</a>
+        <a href="/videos/">Videos</a>
+        <a href="{% url 'manage_members' %}">Members</a>
+        {% if user.is_authenticated %}
+            <a href="{% url 'add_post' %}">➕ Add Post</a>
+        {% endif %}
+    </div>
+
+    <!-- RIGHT -->
+    <div class="nav-right">
+        <input type="text" class="search" placeholder="Search...">
+        <button onclick="toggleTheme()">🌙</button>
+
+        {% if user.is_authenticated %}
+            <form method="post" action="{% url 'logout' %}">
+                {% csrf_token %}
+                <button type="submit">Logout</button>
+            </form>
+        {% else %}
+            <a href="/login/">Editor</a>
+        {% endif %}
+    </div>
+</nav>
+
+<!-- MESSAGES  -->
+{% if messages %}
+<div class="messages-container">
+    {% for message in messages %}
+        <div class="alert {{ message.tags }}">{{ message }}</div>
+    {% endfor %}
+</div>
+{% endif %}
+
+<!-- PAGE CONTENT -->
+{% block content %}{% endblock %}
+
+<script>
+    function toggleMenu() {
+        document.querySelector('.nav-center').classList.toggle('active');
+        document.querySelector('.nav-right').classList.toggle('active');
+    }
+
+    function toggleTheme() {
+        document.body.classList.toggle("dark");
+        localStorage.setItem("theme",
+            document.body.classList.contains("dark") ? "dark" : "light"
+        );
+    }
+
+    if (localStorage.getItem("theme") === "dark") {
+        document.body.classList.add("dark");
+    }
+</script>
+
+</body>
+</html>

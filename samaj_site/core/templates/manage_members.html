@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h2>Top Members</h2>
+
+<!-- Add Member Button (only for staff) -->
+{% if user.is_authenticated and user.is_staff %}
+    <a href="{% url 'add_member' %}" class="manage-btn" style="margin-bottom:15px; display:inline-block;">
+        ➕ Add Member
+    </a>
+{% endif %}
+
+<!-- Members Table -->
+<table border="1" cellpadding="5" style="width:100%; border-collapse: collapse;">
+    <thead style="background-color:#ff8c00; color:#fff;">
+        <tr>
+            <th>Name</th>
+            <th>Age</th>
+            <th>Location</th>
+            <th>Education</th>
+            <th>Profession</th>
+            {% if user.is_authenticated and user.is_staff %}
+                <th>Actions</th>
+            {% endif %}
+        </tr>
+    </thead>
+    <tbody>
+        {% for member in members %}
+        <tr>
+            <td>{{ member.name }}</td>
+            <td>{{ member.age }}</td>
+            <td>{{ member.location }}</td>
+            <td>{{ member.education }}</td>
+            <td>{{ member.profession }}</td>
+            {% if user.is_authenticated and user.is_staff %}
+                <td>
+                    <a href="{% url 'edit_member' member.id %}" class="edit-btn">✏ Edit</a>
+                    <a href="{% url 'delete_member' member.id %}" 
+                       class="delete-btn" 
+                       onclick="return confirm('Are you sure you want to delete this member?');">
+                       🗑 Delete
+                    </a>
+                </td>
+            {% endif %}
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="{% if user.is_authenticated and user.is_staff %}6{% else %}5{% endif %}" 
+                style="text-align:center;">
+                No members found.
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}

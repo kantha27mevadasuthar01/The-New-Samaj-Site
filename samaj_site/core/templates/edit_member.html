@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Edit Member: {{ member.name }}</h2>
+
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="manage-btn">💾 Save Changes</button>
+    <a href="{% url 'manage_members' %}" class="manage-btn" style="background:#ccc; color:#000;">Back</a>
+</form>
+{% endblock %}

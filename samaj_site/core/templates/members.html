@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+
+{% block title %}Members{% endblock %}
+
+{% block content %}
+
+<div class="members-container">
+    <h2 class="members-heading">Members</h2>
+
+    {% if members %}
+        <ul class="members-list">
+            {% for member in members %}
+                <li class="member-item">
+                    <strong>{{ member.name }}</strong>
+                    {% if member.email %}
+                        - {{ member.email }}
+                    {% endif %}
+
+                    {% if user.is_authenticated and user.is_staff %}
+                        <span class="member-actions">
+                            <a href="{% url 'edit_member' member.id %}" class="edit-btn">✏ Edit</a>
+                            <a href="{% url 'delete_member' member.id %}" class="delete-btn">🗑 Delete</a>
+                        </span>
+                    {% endif %}
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No members found.</p>
+    {% endif %}
+
+    {% if user.is_authenticated and user.is_staff %}
+        <a href="{% url 'add_member' %}" class="add-member-btn">➕ Add Member</a>
+    {% endif %}
+</div>
+
+{% endblock %}

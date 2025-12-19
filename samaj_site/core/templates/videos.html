@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Videos</h2>
+{% for post in posts %}
+    <h3>{{ post.title }}</h3>
+    <video width="300" controls>
+        <source src="{{ post.file.url }}">
+    </video>
+    <p>{{ post.content }}</p>
+{% endfor %}
+{% endblock %}
+
+{% if user.is_authenticated and user.is_staff %}
+    <a href="{% url 'edit_post' post.id %}">Edit</a>
+    <a href="{% url 'delete_post' post.id %}">Delete</a>
+{% endif %}

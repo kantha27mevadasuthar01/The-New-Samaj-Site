@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Add New Member</h2>
+
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="manage-btn">➕ Add Member</button>
+    <a href="{% url 'manage_members' %}" class="manage-btn" style="background:#ccc; color:#000;">Cancel</a>
+</form>
+{% endblock %}
