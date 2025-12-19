@@ -20,8 +20,9 @@ DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 
 ALLOWED_HOSTS = os.environ.get(
     'ALLOWED_HOSTS',
-    'kantha-27-mevada-suthar.onrender.com,localhost,127.0.0.1'
+    'kantha-django-site-onrender-com.onrender.com,localhost,127.0.0.1'
 ).split(',')
+
 
 # ---------------------------
 # Installed Apps
