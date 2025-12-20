@@ -16,11 +16,11 @@ SECRET_KEY = os.environ.get(
     'django-insecure-*0^%4b5qwna(_ra##%pwi$!&c_6v-0v3r#4*6%^-kafjc(7nl@'
 )
 
-DEBUG = os.environ.get('DEBUG', 'False') == 'True'
+DEBUG = 'True'
 
 ALLOWED_HOSTS = os.environ.get(
     'ALLOWED_HOSTS',
-    'kantha-django-site-onrender-com.onrender.com,localhost,127.0.0.1'
+    'Kantha27MevadaSuthar.pythonanywhere.com,localhost,127.0.0.1'
 ).split(',')
 
 

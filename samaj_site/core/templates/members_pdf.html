@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Members List</title>
+    <style>
+        table { width: 100%; border-collapse: collapse; }
+        th, td { border: 1px solid #333; padding: 5px; text-align: left; }
+        th { background: #eee; }
+    </style>
+</head>
+<body>
+    <h2>Members List</h2>
+    <table>
+        <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Phone</th>
+        </tr>
+        {% for member in members %}
+        <tr>
+            <td>{{ member.name }}</td>
+            <td>{{ member.email }}</td>
+            <td>{{ member.phone }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>
+

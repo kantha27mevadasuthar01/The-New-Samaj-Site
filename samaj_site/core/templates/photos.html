@@ -1,14 +1,21 @@
 {% extends 'base.html' %}
 {% block content %}
 <h2>Photos</h2>
+
 {% for post in posts %}
     <h3>{{ post.title }}</h3>
-    <img src="{{ post.file.url }}" width="300">
+
+    {% if post.file %}
+        <img src="{{ post.file.url }}" width="300">
+    {% endif %}
+
     <p>{{ post.content }}</p>
+
+    {% if user.is_authenticated and user.is_staff %}
+        <a href="{% url 'edit_post' post.id %}">Edit</a>
+        <a href="{% url 'delete_post' post.id %}">Delete</a>
+    {% endif %}
+{% empty %}
+    <p>No photos uploaded yet.</p>
 {% endfor %}
 {% endblock %}
-
-{% if user.is_authenticated and user.is_staff %}
-    <a href="{% url 'edit_post' post.id %}">Edit</a>
-    <a href="{% url 'delete_post' post.id %}">Delete</a>
-{% endif %}

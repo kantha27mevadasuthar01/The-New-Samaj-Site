@@ -2,10 +2,14 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.views import LoginView
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib import messages
-from .models import Post, Member
-from .forms import PostForm, MemberForm
-from .forms import HomePageForm
+from django.http import FileResponse, Http404
+from django.conf import settings
+from django.template.loader import render_to_string
+import io
+from reportlab.pdfgen import canvas
 
+from .models import Post, Member
+from .forms import PostForm, MemberForm, HomePageForm
 
 # Staff check decorator
 def staff_required(view):
@@ -15,51 +19,62 @@ def staff_required(view):
 class EditorLoginView(LoginView):
     template_name = 'login.html'
 
-# Home page (latest text posts + inline add/edit/delete)
+# =========================
+# PUBLIC VIEWS
+# =========================
+
 def home(request):
     posts = Post.objects.filter(post_type='text').order_by('-created_at')[:50]
-
-    # Handle new post submission
-    if request.method == 'POST' and request.user.is_authenticated and request.user.is_staff:
-        title = request.POST.get('title')
-        content = request.POST.get('content')
-        post_type = request.POST.get('post_type')
-        file = request.FILES.get('file')
-
-        post = Post.objects.create(
-            title=title,
-            content=content,
-            post_type=post_type,
-            file=file
-        )
-        messages.success(request, f"Post '{post.title}' added successfully.")
-
-        # Redirect based on post type
-        if post_type == "text":
-            return redirect('home')
-        elif post_type == "photo":
-            return redirect('photos')
-        else:
-            return redirect('videos')
-
     return render(request, 'home.html', {'posts': posts})
 
-# Photos page
 def photos(request):
     posts = Post.objects.filter(post_type='photo').order_by('-created_at')
     return render(request, 'photos.html', {'posts': posts})
 
-# Videos page
 def videos(request):
     posts = Post.objects.filter(post_type='video').order_by('-created_at')
     return render(request, 'videos.html', {'posts': posts})
 
-# Members page (public)
+# =========================
+# LOGIN REQUIRED
+# =========================
+
+@login_required
 def members(request):
     members = Member.objects.all().order_by('name')
     return render(request, 'members.html', {'members': members})
 
-# Members management (staff only)
+@login_required
+def download_post_file(request, post_id):
+    post = get_object_or_404(Post, id=post_id)
+    if not post.file:
+        raise Http404("File not found.")
+    return FileResponse(post.file.open(), as_attachment=True)
+
+@login_required
+def download_members_pdf(request):
+    members = Member.objects.all().order_by('name')
+    buffer = io.BytesIO()
+    p = canvas.Canvas(buffer)
+    y = 800
+    p.setFont("Helvetica-Bold", 14)
+    p.drawString(50, y, "Members List")
+    y -= 30
+    p.setFont("Helvetica", 12)
+    for member in members:
+        p.drawString(50, y, f"{member.name} - {member.email if hasattr(member, 'email') else ''}")
+        y -= 20
+        if y < 50:
+            p.showPage()
+            y = 800
+    p.save()
+    buffer.seek(0)
+    return FileResponse(buffer, as_attachment=True, filename="members.pdf")
+
+# =========================
+# STAFF ONLY
+# =========================
+
 @staff_required
 def manage_members(request):
     members = Member.objects.all().order_by('name')
@@ -67,27 +82,21 @@ def manage_members(request):
 
 @staff_required
 def add_member(request):
-    if request.method == 'POST':
-        form = MemberForm(request.POST)
-        if form.is_valid():
-            member = form.save()
-            messages.success(request, f"Member '{member.name}' added successfully.")
-            return redirect('manage_members')
-    else:
-        form = MemberForm()
+    form = MemberForm(request.POST or None)
+    if form.is_valid():
+        member = form.save()
+        messages.success(request, f"Member '{member.name}' added successfully.")
+        return redirect('manage_members')
     return render(request, 'add_member.html', {'form': form})
 
 @staff_required
 def edit_member(request, id):
     member = get_object_or_404(Member, id=id)
-    if request.method == 'POST':
-        form = MemberForm(request.POST, instance=member)
-        if form.is_valid():
-            form.save()
-            messages.success(request, f"Member '{member.name}' updated successfully.")
-            return redirect('manage_members')
-    else:
-        form = MemberForm(instance=member)
+    form = MemberForm(request.POST or None, instance=member)
+    if form.is_valid():
+        form.save()
+        messages.success(request, f"Member '{member.name}' updated successfully.")
+        return redirect('manage_members')
     return render(request, 'edit_member.html', {'form': form, 'member': member})
 
 @staff_required
@@ -99,43 +108,42 @@ def delete_member(request, id):
         return redirect('manage_members')
     return render(request, 'delete_member.html', {'member': member})
 
-# Edit post (staff only)
+@staff_required
+def add_post(request):
+    form = PostForm(request.POST or None, request.FILES or None)
+    if form.is_valid():
+        post = form.save()
+        messages.success(request, f"Post '{post.title}' added successfully.")
+        return redirect('home')
+    return render(request, 'add_post.html', {'form': form})
+
 @staff_required
 def edit_post(request, post_id):
     post = get_object_or_404(Post, id=post_id)
-    if request.method == 'POST':
-        form = PostForm(request.POST, request.FILES or None, instance=post)
-        if form.is_valid():
-            form.save()
-            messages.success(request, f"Post '{post.title}' updated successfully.")
-
-            # Redirect based on post type
-            if post.post_type == "text":
-                return redirect('home')
-            elif post.post_type == "photo":
-                return redirect('photos')
-            else:
-                return redirect('videos')
-    else:
-        form = PostForm(instance=post)
+    form = PostForm(request.POST or None, request.FILES or None, instance=post)
+    if form.is_valid():
+        form.save()
+        messages.success(request, f"Post '{post.title}' updated successfully.")
+        return redirect('home')
     return render(request, 'edit_post.html', {'form': form, 'post': post})
 
-# Delete post (staff only)
 @staff_required
 def delete_post(request, post_id):
     post = get_object_or_404(Post, id=post_id)
-    post_type = post.post_type
     if request.method == 'POST':
         post.delete()
         messages.success(request, f"Post '{post.title}' deleted successfully.")
-
-        if post_type == "text":
-            return redirect('home')
-        elif post_type == "photo":
-            return redirect('photos')
-        else:
-            return redirect('videos')
+        return redirect('home')
     return render(request, 'delete_post.html', {'post': post})
+
+@staff_required
+def edit_home(request):
+    form = HomePageForm(request.POST or None)
+    if form.is_valid():
+        form.save()
+        messages.success(request, "Home page updated successfully.")
+        return redirect('home')
+    return render(request, 'edit_home.html', {'form': form})
 
 # Context processor
 def base_context(request):
@@ -143,33 +151,22 @@ def base_context(request):
         'site_name': 'Samaj Site',
         'user': request.user,
     }
-# Edit home page content (staff only)
 @staff_required
-def edit_home(request):
-    if request.method == 'POST':
-        form = HomePageForm(request.POST)
-        if form.is_valid():
-            form.save()
-            messages.success(request, "Home page content updated successfully.")
-            return redirect('home')
-    else:
-        form = HomePageForm()
-
-    return render(request, 'edit_home.html', {'form': form})
-
-@staff_required
-def add_post(request):
-    if request.method == 'POST':
-        form = PostForm(request.POST, request.FILES)
-        if form.is_valid():
-            post = form.save()
-            messages.success(request, f"Post '{post.title}' added successfully.")
-            if post.post_type == "text":
-                return redirect('home')
-            elif post.post_type == "photo":
-                return redirect('photos')
-            else:
-                return redirect('videos')
-    else:
-        form = PostForm()
-    return render(request, 'add_post.html', {'form': form})
+def download_posts_pdf(request, post_type): 
+    posts = Post.objects.filter(post_type=post_type).order_by('created_at')
+    buffer = io.BytesIO()
+    p = canvas.Canvas(buffer)
+    y = 800
+    p.setFont("Helvetica-Bold", 14)
+    p.drawString(50, y, f"{post_type.capitalize()} Posts List")
+    y -= 30
+    p.setFont("Helvetica", 12)
+    for post in posts:
+        p.drawString(50, y, f"{post.title} - {post.created_at.strftime('%Y-%m-%d')}")
+        y -= 20
+        if y < 50:
+            p.showPage()
+            y = 800
+    p.save()
+    buffer.seek(0)
+    return FileResponse(buffer, as_attachment=True, filename=f"{post_type}_posts.pdf")  

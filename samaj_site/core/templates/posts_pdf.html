@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>{{ post_type|title }} List</title>
+    <style>
+        table { width: 100%; border-collapse: collapse; }
+        th, td { border: 1px solid #333; padding: 5px; text-align: left; }
+        th { background: #eee; }
+    </style>
+</head>
+<body>
+    <h2>{{ post_type|title }} List</h2>
+    <table>
+        <tr>
+            <th>Title</th>
+            <th>Created At</th>
+            {% if post_type == "photo" or post_type == "video" %}
+                <th>File</th>
+            {% endif %}
+        </tr>
+        {% for post in posts %}
+        <tr>
+            <td>{{ post.title }}</td>
+            <td>{{ post.created_at }}</td>
+            {% if post_type == "photo" or post_type == "video" %}
+                <td>{{ post.file.url }}</td>
+            {% endif %}
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>
