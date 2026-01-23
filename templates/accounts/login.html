@@ -1,0 +1,25 @@
+{% extends 'base/base.html' %}
+{% load static %}
+{% block title %}Sign In | KANTHA27{% endblock %}
+{% block content %}
+<div class="glass-card animate-fade-in" style="max-width: 450px; margin: 4rem auto; text-align: center; padding: 3rem;">
+    <h2 style="color: var(--primary-color); margin-bottom: 2rem; font-weight: 800; letter-spacing: -1px;">MEMBER SIGN IN
+    </h2>
+    <form method="post">
+        {% csrf_token %}
+        {% for field in form %}
+        <div class="form-field-wrapper" style="text-align: left;">
+            <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+            {{ field }}
+            {% if field.errors %}<div class="form-error">{{ field.errors.0 }}</div>{% endif %}
+        </div>
+        {% endfor %}
+        <button type="submit" class="btn-primary"
+            style="width: 100%; margin-top: 1rem; padding: 15px; font-weight: 700;">SIGN IN</button>
+    </form>
+    <p style="margin-top: 2rem; color: #666; font-size: 0.9rem;">
+        New member? <a href="{% url 'register' %}" style="color: var(--accent-color); font-weight: 700;">CREATE
+            ACCOUNT</a>
+    </p>
+</div>
+{% endblock %}

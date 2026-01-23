@@ -1,0 +1,433 @@
+/* Kantha27 Orange Theme */
+:root {
+    --primary-color: #FF6D00;
+    /* Saffron Orange */
+    --secondary-color: #FFE0B2;
+    /* Light Orange/Cream */
+    --accent-color: #D84315;
+    /* Burnt Sienna/Red */
+    --text-color: #333333;
+    --text-white: #ffffff;
+    --bg-color: #FAFAFA;
+    --shadow-sm: 0 4px 6px rgba(0, 0, 0, 0.1);
+    --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+    --gradient-primary: linear-gradient(135deg, #FF6D00 0%, #FF9E80 100%);
+    --navbar-height: 80px;
+}
+
+body {
+    font-family: 'Outfit', sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    margin: 0;
+    padding: 0;
+    line-height: 1.6;
+    position: relative;
+    min-height: 100vh;
+}
+
+body::before {
+    content: "";
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 80%;
+    height: 80%;
+    background-image: url('../img/logo.png');
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+    opacity: 0.1;
+    /* Increased opacity */
+    z-index: -1;
+    pointer-events: none;
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.animate-fade-in {
+    animation: fadeIn 0.8s ease-out forwards;
+}
+
+/* Reusable Components */
+.glass-card {
+    background: white;
+    border-radius: 12px;
+    padding: 2rem;
+    box-shadow: var(--shadow-sm);
+    border: 1px solid rgba(255, 109, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.glass-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-lg);
+}
+
+.btn-primary {
+    background: var(--primary-color);
+    color: white;
+    padding: 0.8rem 1.5rem;
+    border-radius: 50px;
+    text-decoration: none;
+    border: none;
+    font-weight: 600;
+    transition: all 0.3s;
+    display: inline-block;
+    cursor: pointer;
+}
+
+.btn-primary:hover {
+    background: var(--accent-color);
+    transform: scale(1.05);
+}
+
+.btn-secondary {
+    background: transparent;
+    color: var(--primary-color);
+    border: 2px solid var(--primary-color);
+    padding: 0.8rem 1.5rem;
+    border-radius: 50px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s;
+    display: inline-block;
+    cursor: pointer;
+}
+
+.btn-secondary:hover {
+    background: var(--primary-color);
+    color: white;
+}
+
+.btn-sm {
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+    display: inline-block;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.text-primary { color: var(--primary-color); }
+.text-accent { color: var(--accent-color); }
+
+/* Navbar */
+.navbar {
+    background: white;
+    padding: 0 5%;
+    height: var(--navbar-height);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: var(--shadow-sm);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.nav-brand {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--primary-color);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    height: 100%;
+}
+
+.nav-logo {
+    transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s ease;
+    border-radius: 50%;
+    z-index: 1010;
+    position: relative;
+    transform-origin: top left;
+    height: 60px;
+}
+
+.nav-logo:hover {
+    transform: scale(3.5);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+    background: white;
+    z-index: 1020;
+}
+
+.nav-links {
+    list-style: none;
+    display: flex;
+    gap: 2rem;
+    align-items: center;
+    margin: 0;
+    padding: 0;
+}
+
+.nav-links a {
+    text-decoration: none;
+    color: #555;
+    font-weight: 500;
+    transition: color 0.3s;
+}
+
+.nav-links a:hover,
+.nav-links a.active {
+    color: var(--primary-color);
+}
+
+.hamburger {
+    display: none;
+    cursor: pointer;
+    font-size: 1.5rem;
+    color: var(--primary-color);
+}
+
+/* Footer */
+footer {
+    background: #333;
+    color: white;
+    text-align: center;
+    padding: 2rem;
+    margin-top: 4rem;
+}
+
+/* Forms */
+.form-field-wrapper {
+    margin-bottom: 1.2rem;
+}
+
+.form-field-wrapper input,
+.form-field-wrapper select,
+.form-field-wrapper textarea {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1.5px solid #eee;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-family: 'Outfit', sans-serif;
+    transition: all 0.3s ease;
+    background: #fafafa;
+    box-sizing: border-box; /* Important for padding */
+}
+
+.form-field-wrapper input:focus,
+.form-field-wrapper select:focus,
+.form-field-wrapper textarea:focus {
+    border-color: var(--primary-color);
+    background: white;
+    outline: none;
+    box-shadow: 0 0 0 4px rgba(255, 109, 0, 0.1);
+}
+
+.form-label {
+    display: block;
+    margin-bottom: 0.6rem;
+    color: var(--primary-color);
+    font-weight: 700;
+    font-size: 0.8rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+}
+
+.form-error {
+    color: #d32f2f;
+    font-size: 0.8rem;
+    margin-top: 5px;
+    font-weight: 500;
+}
+
+/* Icon Animations */
+.fas, .fab, .far {
+    transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    display: inline-block;
+}
+
+a:hover .fas, a:hover .fab, a:hover .far,
+button:hover .fas, button:hover .fab, button:hover .far,
+.fas:hover, .fab:hover, .far:hover {
+    transform: scale(1.3);
+}
+
+.btn-primary i, .btn-secondary i {
+    pointer-events: none;
+}
+
+.btn-primary:hover i, .btn-secondary:hover i {
+    transform: scale(1.3);
+}
+
+/* Layout Utilities */
+.dashboard-container {
+    display: flex;
+    gap: 2rem;
+}
+
+.sidebar {
+    width: 250px;
+    flex-shrink: 0;
+}
+
+.sidebar-menu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.sidebar-menu li {
+    margin-bottom: 0.5rem;
+}
+
+.sidebar-menu a {
+    display: block;
+    padding: 0.8rem 1rem;
+    border-radius: 8px;
+    text-decoration: none;
+    color: #555;
+    transition: background 0.3s, color 0.3s;
+}
+
+.sidebar-menu a:hover, .sidebar-menu a.active {
+    background: rgba(255, 109, 0, 0.1);
+    color: var(--primary-color);
+    font-weight: 600;
+}
+
+.main-content {
+    flex: 1;
+}
+
+.grid-actions {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+    margin-top: 2rem;
+}
+
+.action-card {
+    background: var(--bg-color);
+    padding: 1.5rem;
+    border-radius: 12px;
+    text-align: center;
+    transition: transform 0.3s;
+}
+
+.action-card:hover {
+    transform: translateY(-3px);
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+    body {
+        font-size: 15px;
+    }
+
+    .navbar {
+        height: 60px;
+        padding: 0 1rem;
+    }
+
+    .nav-brand {
+        font-size: 1.1rem;
+    }
+
+    .nav-brand img {
+        height: 40px !important; /* Force override inline provided styles if any, though we should move them to class */
+        margin-right: 8px !important;
+    }
+    
+    .nav-logo:hover {
+         transform: none; /* Disable massive zoom on mobile */
+         box-shadow: none;
+    }
+
+    .hamburger {
+        display: block;
+    }
+
+    .nav-links {
+        position: fixed;
+        top: 60px; /* Below navbar */
+        left: 0;
+        right: 0;
+        background: white;
+        flex-direction: column;
+        padding: 2rem;
+        gap: 1rem;
+        box-shadow: 0 10px 15px rgba(0,0,0,0.05);
+        clip-path: polygon(0 0, 100% 0, 100% 0, 0 0); /* Hidden */
+        transition: clip-path 0.4s ease-in-out;
+        z-index: 999;
+    }
+
+    .nav-links.active {
+        clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+    }
+
+    .dashboard-container {
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .sidebar {
+        width: 100%;
+        order: -1; /* Sidebar on top? User might prefer it. Or maybe main content first. Let's keep it on top for nav. */
+    }
+    
+    .sidebar .glass-card {
+        padding: 1rem;
+        display: flex;
+        overflow-x: auto;
+        gap: 1rem;
+        align-items: center;
+    }
+    
+    .sidebar h3 {
+        display: none; /* Hide 'Menu' title on mobile to save space */
+    }
+
+    .sidebar-menu {
+        display: flex;
+        gap: 0.5rem;
+        white-space: nowrap;
+    }
+
+    .sidebar-menu li {
+        margin-bottom: 0;
+    }
+    
+    .sidebar-menu a {
+        padding: 0.5rem 0.8rem;
+        font-size: 0.9rem;
+        background: #f0f0f0;
+    }
+
+    .main-content {
+        width: 100%;
+    }
+
+    .glass-card {
+        padding: 1.5rem;
+    }
+    
+    footer {
+        padding: 1.5rem;
+        margin-top: 2rem;
+    }
+    
+    .toast-container {
+        width: 90%;
+        left: 5%;
+        right: 5%;
+        top: 80px !important;
+    }
+}

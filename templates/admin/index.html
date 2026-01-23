@@ -1,0 +1,51 @@
+{% extends "admin/index.html" %}
+{% load static %}
+
+{% block extrahead %}
+{{ block.super }}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<link rel="stylesheet" href="{% static 'css/admin_custom.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="glass-card"
+    style="margin-bottom: 2rem; padding: 20px; background: white; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+    <h2 style="color: var(--primary-bg); margin-bottom: 1rem;">Donation Trends</h2>
+    <div style="height: 300px; position: relative;">
+        <canvas id="adminDonationChart"></canvas>
+    </div>
+</div>
+
+{{ chart_labels|json_script:"admin-chart-labels" }}
+{{ chart_data|json_script:"admin-chart-data" }}
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const labels = JSON.parse(document.getElementById('admin-chart-labels').textContent);
+        const data = JSON.parse(document.getElementById('admin-chart-data').textContent);
+
+        const ctx = document.getElementById('adminDonationChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Total Donations (₹)',
+                    data: data,
+                    borderColor: '#E65100',
+                    backgroundColor: 'rgba(230, 81, 0, 0.2)',
+                    borderWidth: 2,
+                    tension: 0.4,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false
+            }
+        });
+    });
+</script>
+
+{{ block.super }}
+{% endblock %}

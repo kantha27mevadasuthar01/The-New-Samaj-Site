@@ -1,0 +1,59 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block title %}Create Sub-Admin | Kantha27{% endblock %}
+
+{% block content %}
+<div class="form-container"
+    style="max-width: 600px; margin: 0 auto; padding: 2rem; background: white; border-radius: 12px; box-shadow: var(--shadow-small);">
+    <h2 style="color: var(--primary-color); text-align: center; margin-bottom: 2rem;">Create New Sub-Admin</h2>
+
+    <form method="post">
+        {% csrf_token %}
+
+        {% for field in form %}
+        <div class="form-group" style="margin-bottom: 1.5rem;">
+            <label style="display: block; margin-bottom: 0.5rem; color: #555; font-weight: 500;">
+                {{ field.label }}
+            </label>
+            {{ field }}
+            {% if field.errors %}
+            <div style="color: #e74c3c; font-size: 0.85rem; margin-top: 0.25rem;">
+                {{ field.errors.0 }}
+            </div>
+            {% endif %}
+            {% if field.help_text %}
+            <div style="color: #888; font-size: 0.8rem; margin-top: 0.25rem;">
+                {{ field.help_text }}
+            </div>
+            {% endif %}
+        </div>
+        {% endfor %}
+
+        <div style="margin-top: 2rem;">
+            <button type="submit" class="btn-primary" style="width: 100%; justify-content: center;">
+                Create Sub-Admin
+            </button>
+        </div>
+    </form>
+
+    <div style="text-align: center; margin-top: 1.5rem;">
+        <a href="{% url 'manage_sub_admins' %}" style="color: #666;">Cancel</a>
+    </div>
+</div>
+
+<style>
+    input {
+        width: 100%;
+        padding: 0.8rem;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        font-family: inherit;
+    }
+
+    input:focus {
+        border-color: var(--primary-color);
+        outline: none;
+    }
+</style>
+{% endblock %}

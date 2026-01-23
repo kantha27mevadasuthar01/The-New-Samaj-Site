@@ -1,0 +1,55 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block title %}Manage Sub-Admins | Kantha27{% endblock %}
+
+{% block content %}
+<div style="max-width: 1000px; margin: 0 auto;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+        <h1 style="color: var(--primary-color); margin: 0;">Manage Sub-Admins</h1>
+        <a href="{% url 'create_sub_admin' %}" class="btn-primary">
+            <i class="fas fa-plus"></i> Create New Sub-Admin
+        </a>
+    </div>
+
+    <div class="glass-card">
+        <table style="width: 100%; border-collapse: collapse;">
+            <thead>
+                <tr style="border-bottom: 2px solid #eee;">
+                    <th style="text-align: left; padding: 1rem; color: var(--primary-color);">Username / Email</th>
+                    <th style="text-align: left; padding: 1rem; color: var(--primary-color);">Phone</th>
+                    <th style="text-align: left; padding: 1rem; color: var(--primary-color);">Date Joined</th>
+                    <th style="text-align: right; padding: 1rem; color: var(--primary-color);">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for admin in sub_admins %}
+                <tr style="border-bottom: 1px solid #f0f0f0;">
+                    <td style="padding: 1rem;">
+                        <strong>{{ admin.username }}</strong>
+                    </td>
+                    <td style="padding: 1rem;">{{ admin.phone_number }}</td>
+                    <td style="padding: 1rem;">{{ admin.date_joined|date:"M d, Y" }}</td>
+                    <td style="padding: 1rem; text-align: right;">
+                        <span
+                            style="background: #e1f5fe; color: #0288d1; padding: 4px 8px; border-radius: 4px; font-size: 0.8rem;">Active</span>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="4" style="padding: 2rem; text-align: center; color: #666;">
+                        No Sub-Admins found. Click "Create New" to add one.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div style="margin-top: 2rem;">
+        <a href="{% url 'staff_portal' %}" style="color: #666; text-decoration: none;">
+            <i class="fas fa-arrow-left"></i> Back to Staff Portal
+        </a>
+    </div>
+</div>
+{% endblock %}

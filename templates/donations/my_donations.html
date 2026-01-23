@@ -1,0 +1,33 @@
+{% extends 'base/base.html' %}
+
+{% block title %}My Donations{% endblock %}
+
+{% block content %}
+<h1 style="color: var(--primary-color); margin-bottom: 2rem;">My Donations</h1>
+
+<div class="glass-card">
+    <table style="width: 100%; border-collapse: collapse;">
+        <thead>
+            <tr style="border-bottom: 2px solid var(--secondary-color);">
+                <th style="text-align: left; padding: 1rem;">Date</th>
+                <th style="text-align: left; padding: 1rem;">Transaction ID</th>
+                <th style="text-align: right; padding: 1rem;">Amount</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for donation in donations %}
+            <tr style="border-bottom: 1px solid #eee;">
+                <td style="padding: 1rem;">{{ donation.created_at|date:"M d, Y" }}</td>
+                <td style="padding: 1rem;">{{ donation.transaction_id }}</td>
+                <td style="padding: 1rem; text-align: right; color: var(--primary-color); font-weight: bold;">₹{{
+                    donation.amount }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="3" style="padding: 2rem; text-align: center;">No donations found.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

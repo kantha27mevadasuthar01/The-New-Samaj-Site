@@ -1,0 +1,53 @@
+{% extends 'base/base.html' %}
+
+{% block title %}Locations{% endblock %}
+
+{% block content %}
+<div style="text-align: center; margin-bottom: 3rem;">
+    <h1 style="color: var(--primary-color);">Samaj Locations</h1>
+    <p>Temples and Community Halls</p>
+</div>
+
+<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 2rem;">
+    {% for location in locations %}
+    <div class="glass-card animate-fade-in"
+        style="padding: 0; overflow: hidden; display: flex; flex-direction: column;">
+        <div style="background: var(--gradient-primary); padding: 1.5rem; color: white;">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                <div>
+                    <h2 style="margin: 0; font-size: 1.5rem; color: white;">{{ location.name }}</h2>
+                    <div style="margin-top: 0.5rem; opacity: 0.9;">
+                        <i class="fas fa-map-marker-alt"></i> {{ location.city }}, {{ location.state }}
+                    </div>
+                </div>
+                {% if user.is_staff %}
+                <a href="{% url 'kantha_admin:locations_mandirlocation_change' location.id %}"
+                    style="background: rgba(255,255,255,0.2); color: white; padding: 4px 8px; border-radius: 4px; text-decoration: none; font-size: 0.8rem;">
+                    <i class="fas fa-edit"></i> Edit
+                </a>
+                {% endif %}
+            </div>
+        </div>
+
+        <div style="padding: 1.5rem; flex: 1;">
+            <p><strong>Address:</strong><br>{{ location.address }}</p>
+            {% if location.description %}
+            <p style="color: #666; margin-top: 1rem; border-top: 1px solid #eee; padding-top: 1rem;">{{
+                location.description }}</p>
+            {% endif %}
+        </div>
+
+        {% if location.google_maps_link %}
+        <div style="padding: 1rem; border-top: 1px solid #eee; text-align: center;">
+            <a href="{{ location.google_maps_link }}" target="_blank"
+                style="color: var(--primary-color); text-decoration: none; font-weight: 600;">
+                <i class="fas fa-location-arrow"></i> Get Directions
+            </a>
+        </div>
+        {% endif %}
+    </div>
+    {% empty %}
+    <p style="text-align: center;">No locations found.</p>
+    {% endfor %}
+</div>
+{% endblock %}

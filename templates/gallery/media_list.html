@@ -1,0 +1,43 @@
+{% extends 'base/base.html' %}
+
+{% block title %}Gallery{% endblock %}
+
+{% block content %}
+<div class="header-section" style="margin-bottom: 2rem;">
+    <h1 class="animate-fade-in" style="color: var(--primary-color);">Gallery</h1>
+    <p class="animate-fade-in">Community Moments</p>
+</div>
+
+<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem;">
+    {% for item in media_items %}
+    <div class="glass-card animate-fade-in" style="padding: 0; overflow: hidden;">
+        <div
+            style="height: 200px; background: #eee; display: flex; align-items: center; justify-content: center; overflow: hidden;">
+            {% if item.media_type == 'PHOTO' and item.file %}
+            <img src="{{ item.file.url }}" alt="{{ item.title }}" style="width: 100%; height: 100%; object-fit: cover;">
+            {% elif item.media_type == 'VIDEO' and item.video_url %}
+            <iframe width="100%" height="100%" src="{{ item.get_embed_url }}" frameborder="0" allowfullscreen></iframe>
+            {% else %}
+            <span style="color: #999;">No Preview</span>
+            {% endif %}
+        </div>
+
+        <div style="padding: 1rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <h3 style="margin: 0; font-size: 1.1rem; color: var(--text-color);">{{ item.title }}</h3>
+                {% if user.is_staff %}
+                <a href="{% url 'kantha_admin:gallery_mediaitem_change' item.id %}" style="color: var(--accent-color);">
+                    <i class="fas fa-edit"></i>
+                </a>
+                {% endif %}
+            </div>
+            {% if item.description %}
+            <p style="font-size: 0.9rem; color: #666; margin-top: 0.5rem;">{{ item.description|truncatechars:100 }}</p>
+            {% endif %}
+        </div>
+    </div>
+    {% empty %}
+    <p>No media found.</p>
+    {% endfor %}
+</div>
+{% endblock %}

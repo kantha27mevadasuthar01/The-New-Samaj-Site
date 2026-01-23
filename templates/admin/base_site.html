@@ -1,0 +1,23 @@
+{% extends "admin/base.html" %}
+{% load static %}
+
+{% block title %}{{ title }} | {{ site_title|default:_('Django site admin') }}{% endblock %}
+
+{% block branding %}
+<h1 id="site-name">
+    <a href="{% url 'kantha_admin:index' %}">
+        <img src="{% static 'img/logo.png' %}" alt=""
+            style="height: 30px; margin-right: 10px; vertical-align: middle; display: none;">
+        {{ site_header|default:_('Django administration') }}
+    </a>
+</h1>
+{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&display=swap">
+<link rel="stylesheet" href="{% static 'css/orange_theme.css' %}"> <!-- Reuse variables/fonts -->
+<link rel="stylesheet" href="{% static 'css/admin_custom.css' %}">
+{% endblock %}
+
+{% block nav-global %}{% endblock %}

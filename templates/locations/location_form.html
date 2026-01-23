@@ -1,0 +1,30 @@
+{% extends 'base/base.html' %}
+{% block title %}{{ title }} | KANTHA27{% endblock %}
+{% block content %}
+<div style="max-width: 650px; margin: 0 auto;">
+    <div class="glass-card" style="padding: 2.5rem;">
+        <h2
+            style="color: var(--primary-color); margin-bottom: 2rem; text-align: center; font-weight: 800; letter-spacing: -1px;">
+            {{ title|upper }}</h2>
+        <form method="post">
+            {% csrf_token %}
+            {% for field in form %}
+            <div class="form-field-wrapper">
+                <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+                {% if field.help_text %}
+                <small style="color: #999; display: block; margin-top: 4px;">{{ field.help_text }}</small>
+                {% endif %}
+                {% if field.errors %}<div class="form-error">{{ field.errors.0 }}</div>{% endif %}
+            </div>
+            {% endfor %}
+            <div style="margin-top: 2.5rem; display: flex; gap: 1rem;">
+                <button type="submit" class="btn-primary" style="flex: 2; padding: 15px; font-weight: 700;">SAVE
+                    LOCATION</button>
+                <a href="{% url 'manage_locations' %}" class="btn-secondary"
+                    style="flex: 1; text-align: center; background: #eee; color: #333; padding: 15px; border-radius: 10px; font-weight: 600;">CANCEL</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

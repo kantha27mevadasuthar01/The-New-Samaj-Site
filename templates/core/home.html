@@ -1,0 +1,80 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block content %}
+<!-- Hero Section -->
+<div
+    style="text-align: center; margin-bottom: 4rem; padding: 4rem 0; background: linear-gradient(135deg, #FFF3E0 0%, #FFFFFF 100%); border-radius: 20px;">
+    <h1 class="animate-fade-in" style="font-size: 3.5rem; color: var(--primary-color); margin-bottom: 1rem;">
+        Kantha27 Mevada Suthar Samaj
+    </h1>
+    <p class="animate-fade-in"
+        style="font-size: 1.2rem; color: #666; max-width: 700px; margin: 0 auto; animation-delay: 0.1s;">
+        Preserving Heritage • Empowering Community • Building Future
+    </p>
+</div>
+
+<div class="container animate-fade-in" style="animation-delay: 0.2s;">
+    <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 2rem;">
+
+        <!-- History Section -->
+        <div class="glass-card">
+            <div
+                style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; border-bottom: 2px solid var(--secondary-color); padding-bottom: 10px;">
+                <h2 style="color: var(--primary-color); margin: 0;"><i class="fas fa-history"></i> Our History</h2>
+                {% if user.is_staff and history %}
+                <a href="{% url 'kantha_admin:core_samajinformation_change' history.id %}" class="btn-sm"
+                    style="color: var(--accent-color); border: 1px solid var(--accent-color); padding: 5px 10px; border-radius: 5px; font-size: 0.8rem; text-decoration: none;">
+                    <i class="fas fa-edit"></i> Edit
+                </a>
+                {% endif %}
+            </div>
+
+            {% if history %}
+            <div style="line-height: 1.8; color: #444;">{{ history.content|linebreaks }}</div>
+            {% else %}
+            <p>Content coming soon...</p>
+            {% endif %}
+        </div>
+
+        <!-- Sidebar -->
+        <div style="display: flex; flex-direction: column; gap: 2rem;">
+            <!-- Purpose -->
+            <div class="glass-card">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                    <h3 style="color: var(--primary-color); margin: 0;">Our Purpose</h3>
+                    {% if user.is_staff and purpose %}
+                    <a href="{% url 'kantha_admin:core_samajinformation_change' purpose.id %}"
+                        style="color: var(--accent-color); font-size: 0.9rem;">
+                        <i class="fas fa-edit"></i>
+                    </a>
+                    {% endif %}
+                </div>
+                {% if purpose %}
+                <p>{{ purpose.content }}</p>
+                {% else %}
+                <p>To unite all 27 gam members.</p>
+                {% endif %}
+            </div>
+
+            <!-- Values -->
+            <div class="glass-card">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                    <h3 style="color: var(--primary-color); margin: 0;">Core Values</h3>
+                    {% if user.is_staff and values %}
+                    <a href="{% url 'kantha_admin:core_samajinformation_change' values.id %}"
+                        style="color: var(--accent-color); font-size: 0.9rem;">
+                        <i class="fas fa-edit"></i>
+                    </a>
+                    {% endif %}
+                </div>
+                {% if values %}
+                <p>{{ values.content }}</p>
+                {% else %}
+                <p>Unity, Seva, Spirituality.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

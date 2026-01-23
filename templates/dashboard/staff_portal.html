@@ -1,0 +1,139 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block title %}Staff Portal | Kantha27{% endblock %}
+
+{% block content %}
+<div class="header-section"
+    style="text-align: center; margin-bottom: 3rem; background: var(--gradient-primary); padding: 3rem; border-radius: 12px; color: white;">
+    <h1><i class="fas fa-user-shield"></i> Staff Portal</h1>
+    <p>Manage content, members, and data.</p>
+</div>
+
+<!-- Stats Overview -->
+<div
+    style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin-bottom: 3rem;">
+    <!-- People Stat -->
+    <div class="glass-card" style="padding: 1.5rem; text-align: center; border-left: 5px solid var(--primary-color);">
+        <h3 style="font-size: 2.5rem; color: var(--primary-color); margin-bottom: 0.5rem;">{{ person_count }}</h3>
+        <p style="color: #666;">Community Members</p>
+    </div>
+    <!-- Donation Stat -->
+    <div class="glass-card" style="padding: 1.5rem; text-align: center; border-left: 5px solid var(--accent-color);">
+        <h3 style="font-size: 2.5rem; color: var(--accent-color); margin-bottom: 0.5rem;">₹{{ donation_total }}</h3>
+        <p style="color: #666;">Total Donations</p>
+    </div>
+    <!-- Locations Stat -->
+    <div class="glass-card" style="padding: 1.5rem; text-align: center; border-left: 5px solid #2ecc71;">
+        <h3 style="font-size: 2.5rem; color: #2ecc71; margin-bottom: 0.5rem;">{{ location_count }}</h3>
+        <p style="color: #666;">Mandir Locations</p>
+    </div>
+    <!-- Media Stat -->
+    <div class="glass-card" style="padding: 1.5rem; text-align: center; border-left: 5px solid #9b59b6;">
+        <h3 style="font-size: 2.5rem; color: #9b59b6; margin-bottom: 0.5rem;">{{ media_count }}</h3>
+        <p style="color: #666;">Gallery Items</p>
+    </div>
+</div>
+
+<!-- Management Grid -->
+<h2 style="color: var(--primary-color); margin-bottom: 1.5rem; border-bottom: 2px solid #eee; padding-bottom: 0.5rem;">
+    Management Modules</h2>
+<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 2rem;">
+
+    <!-- Core Content -->
+    <div class="glass-card" style="padding: 2rem; position: relative; overflow: hidden;">
+        <div style="position: absolute; top: -10px; right: -10px; font-size: 5rem; color: rgba(0,0,0,0.03);">
+            <i class="fas fa-home"></i>
+        </div>
+        <h3 style="margin-bottom: 1rem; color: var(--primary-color);">Home & Info</h3>
+        <p style="color: #666; margin-bottom: 1.5rem; min-height: 40px;">Edit History, Purpose, Values and other static
+            content.</p>
+        <div style="display: flex; gap: 0.5rem;">
+            <a href="{% url 'manage_content' %}" class="btn-primary" style="flex: 1; text-align: center;">Manage</a>
+        </div>
+    </div>
+
+    <!-- People Directory -->
+    <div class="glass-card" style="padding: 2rem; position: relative; overflow: hidden;">
+        <div style="position: absolute; top: -10px; right: -10px; font-size: 5rem; color: rgba(0,0,0,0.03);">
+            <i class="fas fa-users"></i>
+        </div>
+        <h3 style="margin-bottom: 1rem; color: var(--primary-color);">People Directory</h3>
+        <p style="color: #666; margin-bottom: 1.5rem; min-height: 40px;">Add or edit community member profiles.</p>
+        <div style="display: flex; gap: 0.5rem;">
+            <a href="{% url 'manage_people' %}" class="btn-primary" style="flex: 1; text-align: center;">View List</a>
+            <a href="{% url 'add_person' %}" class="btn-secondary" style="flex: 1; text-align: center;">Add New</a>
+        </div>
+    </div>
+
+    <!-- Gallery -->
+    <div class="glass-card" style="padding: 2rem; position: relative; overflow: hidden;">
+        <div style="position: absolute; top: -10px; right: -10px; font-size: 5rem; color: rgba(0,0,0,0.03);">
+            <i class="fas fa-images"></i>
+        </div>
+        <h3 style="margin-bottom: 1rem; color: var(--primary-color);">Media Gallery</h3>
+        <p style="color: #666; margin-bottom: 1.5rem; min-height: 40px;">Upload photos and videos to the gallery.</p>
+        <div style="display: flex; gap: 0.5rem;">
+            <a href="{% url 'manage_gallery' %}" class="btn-primary" style="flex: 1; text-align: center;">Manage</a>
+            <a href="{% url 'add_media' %}" class="btn-secondary" style="flex: 1; text-align: center;">Add New</a>
+        </div>
+    </div>
+
+    <!-- Locations -->
+    <div class="glass-card" style="padding: 2rem; position: relative; overflow: hidden;">
+        <div style="position: absolute; top: -10px; right: -10px; font-size: 5rem; color: rgba(0,0,0,0.03);">
+            <i class="fas fa-map-marker-alt"></i>
+        </div>
+        <h3 style="margin-bottom: 1rem; color: var(--primary-color);">Locations</h3>
+        <p style="color: #666; margin-bottom: 1.5rem; min-height: 40px;">Manage Mandir locations and addresses.</p>
+        <div style="display: flex; gap: 0.5rem;">
+            <a href="{% url 'manage_locations' %}" class="btn-primary" style="flex: 1; text-align: center;">Manage</a>
+            <a href="{% url 'add_location' %}" class="btn-secondary" style="flex: 1; text-align: center;">Add New</a>
+        </div>
+    </div>
+</div>
+
+{% if user.is_main_admin %}
+<!-- Admin Only Section -->
+<h2
+    style="color: var(--primary-color); margin-top: 3rem; margin-bottom: 1.5rem; border-bottom: 2px solid #eee; padding-bottom: 0.5rem;">
+    System Administration</h2>
+<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 2rem;">
+
+    <!-- Sub-User Management -->
+    <div class="glass-card"
+        style="padding: 2rem; position: relative; overflow: hidden; border-left: 5px solid #34495e;">
+        <div style="position: absolute; top: -10px; right: -10px; font-size: 5rem; color: rgba(0,0,0,0.03);">
+            <i class="fas fa-user-shield"></i>
+        </div>
+        <h3 style="margin-bottom: 1rem; color: var(--primary-color);">Sub-Admins</h3>
+        <p style="color: #666; margin-bottom: 1.5rem; min-height: 40px;">Manage staff access and roles.</p>
+        <div style="display: flex; gap: 0.5rem;">
+            <a href="{% url 'manage_sub_admins' %}" class="btn-primary" style="flex: 1; text-align: center;">Manage</a>
+            <a href="{% url 'create_sub_admin' %}" class="btn-secondary" style="flex: 1; text-align: center;">Add
+                New</a>
+        </div>
+    </div>
+
+    <!-- Audit Logs -->
+    <div class="glass-card"
+        style="padding: 2rem; position: relative; overflow: hidden; border-left: 5px solid #e74c3c;">
+        <div style="position: absolute; top: -10px; right: -10px; font-size: 5rem; color: rgba(0,0,0,0.03);">
+            <i class="fas fa-history"></i>
+        </div>
+        <h3 style="margin-bottom: 1rem; color: var(--primary-color);">Audit Logs</h3>
+        <p style="color: #666; margin-bottom: 1.5rem; min-height: 40px;">View activity history and system logs.</p>
+        <div style="display: flex; gap: 0.5rem;">
+            <a href="{% url 'view_audit_logs' %}" class="btn-primary" style="flex: 1; text-align: center;">View Logs</a>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<div style="margin-top: 3rem; text-align: center;">
+    {% if user.is_staff %}
+    <a href="{% url 'kantha_admin:index' %}" style="color: #999; text-decoration: underline;">Go to Advanced Backend
+        Admin</a>
+    {% endif %}
+</div>
+{% endblock %}

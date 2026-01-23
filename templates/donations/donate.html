@@ -1,0 +1,26 @@
+{% extends 'base/base.html' %}
+{% block title %}Donate | KANTHA27{% endblock %}
+{% block content %}
+<div class="glass-card animate-fade-in" style="max-width: 500px; margin: 4rem auto; text-align: center; padding: 3rem;">
+    <h1 style="color: var(--primary-color); font-weight: 800; margin-bottom: 0.5rem; letter-spacing: -1px;">SUPPORT OUR
+        SAMAJ</h1>
+    <p style="margin-bottom: 2.5rem; color: #666;">Your generous contribution helps us grow and serve better.</p>
+
+    <form method="post">
+        {% csrf_token %}
+        <div class="form-field-wrapper" style="text-align: left;">
+            <label class="form-label">CONTRIBUTION AMOUNT (₹)</label>
+            <input type="number" name="amount" min="1" required placeholder="Enter amount to donate"
+                style="width: 100%; padding: 15px; font-size: 1.2rem; border: 1.5px solid #eee; border-radius: 10px; font-weight: 700;">
+        </div>
+
+        <button type="submit" class="btn-primary"
+            style="width: 100%; padding: 15px; font-weight: 700; font-size: 1rem; margin-top: 1rem;">DONATE NOW</button>
+    </form>
+
+    <div style="margin-top: 2rem; padding-top: 2rem; border-top: 1px solid #eee;">
+        <i class="fas fa-shield-alt" style="color: #2ecc71;"></i>
+        <small style="color: #999; margin-left: 5px;">Secure Transaction</small>
+    </div>
+</div>
+{% endblock %}

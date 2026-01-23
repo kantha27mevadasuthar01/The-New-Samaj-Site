@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Shree Kantha 27 Mevada Suthar Samaj{% endblock %}</title>
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Theme CSS -->
+    <link rel="stylesheet" href="{% static 'css/orange_theme.css' %}">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="{% static 'img/logo.png' %}">
+
+    {% block extra_css %}{% endblock %}
+</head>
+
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <a href="{% url 'home' %}" class="nav-brand">
+            <img src="{% static 'img/logo.png' %}" alt="Logo" class="nav-logo">
+            <span>Shree Kantha 27 Mevada Suthar Samaj</span>
+        </a>
+
+        <div class="hamburger" id="hamburger-menu">
+            <i class="fas fa-bars"></i>
+        </div>
+
+        <ul class="nav-links" id="nav-links">
+            <li><a href="{% url 'home' %}">Home</a></li>
+            {% if user.is_authenticated and user.can_view_directory or user.is_staff %}
+            <li><a href="{% url 'directory' %}">People Directory</a></li>
+            {% endif %}
+            <li><a href="{% url 'media_list' %}">Gallery</a></li>
+            <li><a href="{% url 'location_list' %}">Locations</a></li>
+
+            {% if user.is_authenticated %}
+            <li><a href="{% url 'donate_view' %}" class="btn-secondary" style="padding: 0.5rem 1rem;">Donate</a></li>
+            {% if user.is_staff %}
+            <li><a href="{% url 'staff_portal' %}" class="text-accent" style="font-weight: bold;">Staff Portal</a></li>
+            {% endif %}
+            <li>
+                <form id="logout-form" action="{% url 'logout' %}" method="post" style="display: none;">
+                    {% csrf_token %}
+                </form>
+                <a href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                    Logout ({{ user.username }})
+                </a>
+            </li>
+            {% else %}
+            <li><a href="{% url 'login' %}">Login</a></li>
+            <li><a href="{% url 'register' %}" class="btn-primary" style="padding: 0.5rem 1rem;">Join Now</a></li>
+            {% endif %}
+        </ul>
+    </nav>
+
+    <!-- Main Content -->
+    <main style="padding: 2rem 5%; min-height: 80vh;">
+        {% if messages %}
+        <div class="toast-container" style="position: fixed; top: 100px; right: 20px; z-index: 9999;">
+            {% for message in messages %}
+            <div
+                style="background: white; padding: 1rem; margin-bottom: 1rem; border-left: 5px solid var(--primary-color); box-shadow: var(--shadow-lg); border-radius: 4px;">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2026 Kantha27 Mevada Suthar Samaj. Connected by Heritage.</p>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const hamburger = document.getElementById('hamburger-menu');
+            const navLinks = document.getElementById('nav-links');
+
+            if (hamburger) {
+                hamburger.addEventListener('click', () => {
+                    navLinks.classList.toggle('active');
+
+                    // Toggle icon
+                    const icon = hamburger.querySelector('i');
+                    if (navLinks.classList.contains('active')) {
+                        icon.classList.remove('fa-bars');
+                        icon.classList.add('fa-times');
+                    } else {
+                        icon.classList.remove('fa-times');
+                        icon.classList.add('fa-bars');
+                    }
+                });
+            }
+        });
+    </script>
+    {% block extra_js %}{% endblock %}
+</body>
+
+</html>

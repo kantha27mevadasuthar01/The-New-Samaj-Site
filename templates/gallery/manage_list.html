@@ -1,0 +1,51 @@
+{% extends 'base/base.html' %}
+
+{% block title %}Manage Gallery | Kantha27{% endblock %}
+
+{% block content %}
+<div class="header-section"
+    style="background: var(--gradient-primary); padding: 3rem; color: white; border-radius: 12px; margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: center;">
+    <div>
+        <h1>Manage Media Gallery</h1>
+        <p>Edit or delete photos and videos.</p>
+    </div>
+    <a href="{% url 'add_media' %}" class="btn-secondary"><i class="fas fa-plus"></i> Add New Media</a>
+</div>
+
+<div class="glass-card" style="padding: 0; overflow: hidden;">
+    <table style="width: 100%; border-collapse: collapse;">
+        <thead style="background: #E65100; color: white;">
+            <tr>
+                <th style="padding: 1rem; text-align: left;">Title</th>
+                <th style="padding: 1rem; text-align: left;">Type</th>
+                <th style="padding: 1rem; text-align: left;">Order</th>
+                <th style="padding: 1rem; text-align: right;">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in media_items %}
+            <tr style="border-bottom: 1px solid #eee;">
+                <td style="padding: 1rem; font-weight: 500;">{{ item.title }}</td>
+                <td style="padding: 1rem; color: #666;">{{ item.get_media_type_display }}</td>
+                <td style="padding: 1rem; color: #666;">{{ item.order }}</td>
+                <td style="padding: 1rem; text-align: right;">
+                    <a href="{% url 'edit_media' item.pk %}" class="btn-primary"
+                        style="padding: 5px 10px; font-size: 0.9rem; margin-right: 5px;"><i class="fas fa-edit"></i></a>
+                    <a href="{% url 'delete_media' item.pk %}" class="btn-secondary"
+                        style="padding: 5px 10px; font-size: 0.9rem; background: #d32f2f; color: white;"><i
+                            class="fas fa-trash"></i></a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="4" style="padding: 3rem; text-align: center; color: #999;">No media found.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<div style="margin-top: 2rem; text-align: center;">
+    <a href="{% url 'staff_portal' %}" style="color: #666;">Back to Staff Portal</a>
+</div>
+{% endblock %}
