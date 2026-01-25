@@ -1,7 +1,23 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 
+from django.contrib.auth.validators import UnicodeUsernameValidator
+
+class SpaceUnicodeUsernameValidator(UnicodeUsernameValidator):
+    regex = r'^[\w.+- ]+$'
+
 class User(AbstractUser):
+    username_validator = SpaceUnicodeUsernameValidator()
+
+    username = models.CharField(
+        max_length=150,
+        unique=True,
+        help_text='Required. 150 characters or fewer. Letters, digits and @/./+/-/_/space only.',
+        validators=[username_validator],
+        error_messages={
+            'unique': "A user with that username already exists.",
+        },
+    )
     class Role(models.TextChoices):
         ADMIN = 'ADMIN', 'Admin'
         SUB_ADMIN = 'SUB_ADMIN', 'Sub-Admin'
