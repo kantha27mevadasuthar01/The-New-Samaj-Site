@@ -1,93 +1,67 @@
 from django import forms
-from .models import Person
+from .models import Person, Family
 
 class PersonForm(forms.ModelForm):
-    FAMILY_ROLE_CHOICES = [
-        ('head', 'New Family Head (Creates a new group)'),
-        ('member', 'Member of Existing Family'),
-    ]
-    family_role = forms.ChoiceField(
-        choices=FAMILY_ROLE_CHOICES, 
-        widget=forms.RadioSelect(attrs={'class': 'radio-group'}),
-        label="Group Membership Role",
-        required=True
+    # Field for hometown when creating/editing a head
+    hometown = forms.CharField(
+        max_length=100, 
+        required=False, 
+        label="Home Town (For Family Head)",
+        widget=forms.TextInput(attrs={'class': 'form-input', 'placeholder': 'Enter Home Town'})
     )
-    create_user_account = forms.BooleanField(required=False, label="Create User Account for this Member", help_text="A user account will be created using the email as username.")
-    user_password = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-input', 'placeholder': 'Provide Password'}), required=False, label="Account Password")
-    can_view_directory = forms.BooleanField(required=False, label="Grant Directory Access", initial=True)
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        if self.instance and self.instance.pk:
-            from accounts.models import User
-            # If user account exists, hide setup fields
-            if self.instance.email and User.objects.filter(email=self.instance.email).exists():
-                fields_to_hide = ['family_role', 'family_group', 'create_user_account', 'user_password']
-                for field in fields_to_hide:
-                    if field in self.fields:
-                        del self.fields[field]
 
     class Meta:
         model = Person
         fields = [
-            'full_name', 'native_gam', 'current_city', 
-            'state', 'phone_number', 'email', 'age', 'occupation', 'photo', 
-            'family_role', 'family_group'
+            'photo', 'full_name', 'relation_with_head', 'is_head', 
+            'marital_status', 'birth_date', 'education', 'education_other',
+            'maternal_home', 'blood_group', 'address', 'job', 'mobile_number',
+            'family', 'parent_person'
         ]
         widgets = {
-            'full_name': forms.TextInput(attrs={'class': 'form-input', 'placeholder': 'Full Name'}),
-            'age': forms.NumberInput(attrs={'class': 'form-input', 'placeholder': 'Age'}),
-            'native_gam': forms.TextInput(attrs={'class': 'form-input', 'placeholder': 'Native Village'}),
-            'current_city': forms.TextInput(attrs={'class': 'form-input', 'placeholder': 'Current City'}),
-            'state': forms.TextInput(attrs={'class': 'form-input', 'placeholder': 'State'}),
-            'phone_number': forms.TextInput(attrs={'class': 'form-input', 'placeholder': 'Phone Number'}),
-            'email': forms.EmailInput(attrs={'class': 'form-input', 'placeholder': 'Email'}),
-            'occupation': forms.TextInput(attrs={'class': 'form-input', 'placeholder': 'Occupation (Optional)'}),
-            'family_group': forms.Select(attrs={'class': 'form-input'}),
+            'photo': forms.FileInput(attrs={'class': 'form-input-file'}),
+            'full_name': forms.TextInput(attrs={'class': 'form-input', 'placeholder': 'Ex: Rajeshbhai Mevada'}),
+            'relation_with_head': forms.Select(attrs={'class': 'form-input'}),
+            'is_head': forms.CheckboxInput(attrs={'class': 'form-checkbox'}),
+            'marital_status': forms.RadioSelect(attrs={'class': 'radio-group'}),
+            'birth_date': forms.DateInput(attrs={'class': 'form-input', 'type': 'date'}),
+            'education': forms.Select(attrs={'class': 'form-input', 'onchange': 'toggleEducationOther(this)'}),
+            'education_other': forms.TextInput(attrs={
+                'class': 'form-input', 
+                'placeholder': 'Specify Other Education',
+                'id': 'id_education_other',
+                'style': 'display: none;'
+            }),
+            'maternal_home': forms.TextInput(attrs={'class': 'form-input', 'placeholder': 'Maternal Home (Piyu-vatan)'}),
+            'blood_group': forms.Select(attrs={'class': 'form-input'}),
+            'address': forms.Textarea(attrs={'class': 'form-input', 'rows': 3, 'placeholder': 'Full Address'}),
+            'job': forms.TextInput(attrs={'class': 'form-input', 'placeholder': 'Current Job/Profession'}),
+            'mobile_number': forms.TextInput(attrs={'class': 'form-input', 'placeholder': 'Mobile Number'}),
+            'family': forms.Select(attrs={'class': 'form-input'}),
+            'parent_person': forms.Select(attrs={'class': 'form-input'}),
         }
-        labels = {
-            'full_name': 'Full Name',
-            'native_gam': 'Native Village (Gam)',
-            'current_city': 'Current City',
-            'phone_number': 'Phone Number',
-            'photo': 'Profile Photo',
-            'family_group': 'Join Existing Family'
-        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if self.instance and self.instance.pk and self.instance.is_head:
+            if self.instance.family:
+                self.fields['hometown'].initial = self.instance.family.hometown
+        
+        # Display education_other if already set
+        if self.instance and self.instance.education == 'OTHER':
+            self.fields['education_other'].widget.attrs['style'] = 'display: block;'
 
     def clean(self):
         cleaned_data = super().clean()
-        family_role = cleaned_data.get('family_role')
-        family_group = cleaned_data.get('family_group')
-        
-        if family_role == 'member' and not family_group:
-            self.add_error('family_group', "Please select an existing family group if choosing 'Member'.")
-        
-        # Keep previous validations
-        age = cleaned_data.get('age')
-        email = cleaned_data.get('email')
-        phone = cleaned_data.get('phone_number')
-        create_account = cleaned_data.get('create_user_account')
-        password = cleaned_data.get('user_password')
+        is_head = cleaned_data.get('is_head')
+        hometown = cleaned_data.get('hometown')
+        education = cleaned_data.get('education')
+        education_other = cleaned_data.get('education_other')
 
-        # Conditional checks for age < 16
-        if age and age >= 16:
-            if not email:
-                self.add_error('email', "Email is required for members 16 or older.")
-            if not phone:
-                self.add_error('phone_number', "Phone number is required for members 16 or older.")
-
-        # Account creation logic checks
-        if create_account:
-            if not email:
-                self.add_error('create_user_account', "Email is required to create a user account.")
-            if not password:
-                self.add_error('user_password', "Password is required for new accounts.")
-            
-            # Check if email/phone already taken in User model
-            from accounts.models import User
-            if email and User.objects.filter(email=email).exists():
-                self.add_error('email', "A user with this email already exists.")
-            if phone and User.objects.filter(phone_number=phone).exists():
-                self.add_error('phone_number', "A user with this phone number already exists.")
+        if is_head and not hometown:
+            self.add_error('hometown', "Hometown is required for Family Head.")
+        
+        if education == 'OTHER' and not education_other:
+            self.add_error('education_other', "Please specify your education.")
 
         return cleaned_data

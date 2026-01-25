@@ -1,0 +1,260 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block title %}People Directory - SJMS{% endblock %}
+
+{% block extra_css %}
+<style>
+    .directory-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+
+    .search-section {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 12px;
+        box-shadow: var(--shadow-md);
+        margin-bottom: 2rem;
+    }
+
+    .search-form {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)) auto;
+        gap: 1rem;
+        align-items: end;
+    }
+
+    .directory-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 2rem;
+    }
+
+    .hometown-group {
+        grid-column: 1 / -1;
+        background: var(--primary-color);
+        color: white;
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        font-weight: bold;
+        margin-top: 1rem;
+        font-size: 1.25rem;
+    }
+
+    .person-card {
+        background: white;
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: var(--shadow-md);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        position: relative;
+        text-decoration: none;
+        color: inherit;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .person-card:hover {
+        transform: translateY(-5px);
+        box-shadow: var(--shadow-xl);
+    }
+
+    .person-photo {
+        width: 100%;
+        height: 250px;
+        object-fit: cover;
+        background: #f0f0f0;
+    }
+
+    .person-info {
+        padding: 1.5rem;
+    }
+
+    .person-name {
+        font-size: 1.25rem;
+        font-weight: 800;
+        margin-bottom: 0.5rem;
+        color: var(--secondary-color);
+    }
+
+    .person-tag {
+        display: inline-block;
+        padding: 0.2rem 0.6rem;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        background: #fff3e0;
+        color: #e65100;
+        margin-bottom: 1rem;
+        font-weight: 600;
+    }
+
+    .person-details p {
+        margin: 0.4rem 0;
+        font-size: 0.9rem;
+        color: #666;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .is-head-badge {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        background: #ffd700;
+        color: #000;
+        padding: 0.2rem 0.8rem;
+        border-radius: 4px;
+        font-weight: bold;
+        font-size: 0.75rem;
+        box-shadow: var(--shadow-sm);
+    }
+
+    .action-btns {
+        margin-top: auto;
+        padding: 1rem 1.5rem;
+        border-top: 1px solid #eee;
+        display: flex;
+        gap: 0.5rem;
+        background: #fafafa;
+    }
+
+    .btn-icon {
+        width: 35px;
+        height: 35px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        color: white;
+        transition: transform 0.2s ease;
+    }
+
+    .btn-icon:hover {
+        transform: scale(1.1);
+    }
+
+    .btn-edit {
+        background-color: #ff9800;
+    }
+
+    .btn-delete {
+        background-color: #f44336;
+    }
+
+    .btn-view {
+        background-color: var(--primary-color);
+    }
+
+    @media (max-width: 768px) {
+        .search-form {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="directory-header">
+    <div>
+        <h1 class="text-secondary" style="font-weight: 800; margin-bottom: 0.25rem;">People Directory</h1>
+        <p class="text-muted">Explore and connect with our community members.</p>
+    </div>
+    <div style="display: flex; gap: 1rem;">
+        {% if is_admin %}
+        <a href="{% url 'download_directory' %}" class="btn-secondary">
+            <i class="fas fa-download"></i> Download Directory
+        </a>
+        <a href="{% url 'add_person' %}" class="btn-primary">
+            <i class="fas fa-plus"></i> Add New Person
+        </a>
+        {% endif %}
+    </div>
+</div>
+
+<div class="search-section">
+    <form class="search-form" method="GET">
+        <div class="form-group">
+            <label>Search Name or Job</label>
+            <input type="text" name="q" class="form-input" placeholder="Name, Job..." value="{{ query }}">
+        </div>
+        <div class="form-group">
+            <label>Home Town</label>
+            <input type="text" name="hometown" class="form-input" placeholder="Search Hometown..."
+                value="{{ hometown }}">
+        </div>
+        <button type="submit" class="btn-primary"
+            style="height: 45px; display: flex; align-items: center; gap: 0.5rem;">
+            <i class="fas fa-search"></i> Search
+        </button>
+        {% if query or hometown %}
+        <a href="{% url 'people_directory' %}" class="btn-secondary"
+            style="height: 45px; display: flex; align-items: center;">Clear</a>
+        {% endif %}
+    </form>
+</div>
+
+<div class="directory-list">
+    <div class="directory-grid">
+        {% regroup people by family.hometown as hometown_list %}
+
+        {% for hometown in hometown_list %}
+        <div class="hometown-group">
+            <i class="fas fa-home"></i> {{ hometown.grouper|default:"Unknown Hometown" }}
+        </div>
+
+        {% for person in hometown.list %}
+        <div class="person-card">
+            {% if person.is_head %}
+            <span class="is-head-badge">FAMILY HEAD</span>
+            {% endif %}
+
+            {% if person.photo %}
+            <img src="{{ person.photo.url }}" alt="{{ person.full_name }}" class="person-photo">
+            {% else %}
+            <img src="{% static 'img/default_profile.png' %}" alt="Default Profile" class="person-photo">
+            {% endif %}
+
+            <div class="person-info">
+                <div class="person-name">{{ person.full_name }}</div>
+                <span class="person-tag">{{ person.get_relation_with_head_display }}</span>
+
+                <div class="person-details">
+                    {% if person.job %}
+                    <p><i class="fas fa-briefcase"></i> {{ person.job }}</p>
+                    {% endif %}
+                    <p><i class="fas fa-tint"></i> Blood Group: {{ person.blood_group|default:"N/A" }}</p>
+                    <p><i class="fas fa-phone"></i> {{ person.mobile_number|default:"N/A" }}</p>
+                </div>
+            </div>
+
+            <div class="action-btns">
+                <a href="{% url 'person_detail' person.pk %}" class="btn-icon btn-view" title="View Profile">
+                    <i class="fas fa-eye"></i>
+                </a>
+                {% if is_admin %}
+                <a href="{% url 'edit_person' person.pk %}" class="btn-icon btn-edit" title="Edit">
+                    <i class="fas fa-edit"></i>
+                </a>
+                <a href="{% url 'delete_person' person.pk %}" class="btn-icon btn-delete" title="Delete">
+                    <i class="fas fa-trash"></i>
+                </a>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+        {% empty %}
+        <div style="grid-column: 1 / -1; text-align: center; padding: 4rem; background: #fff; border-radius: 12px;">
+            <i class="fas fa-users-slash" style="font-size: 4rem; color: #ddd; margin-bottom: 1rem;"></i>
+            <h3>No people found</h3>
+            <p>Try adjusting your search filters.</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

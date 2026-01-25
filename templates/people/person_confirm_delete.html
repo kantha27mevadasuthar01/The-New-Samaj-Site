@@ -1,26 +1,24 @@
 {% extends 'base/base.html' %}
 
-{% block title %}Delete Member | Kantha27{% endblock %}
+{% block title %}Delete {{ person.full_name }}{% endblock %}
 
 {% block content %}
-<div style="max-width: 500px; margin: 0 auto; text-align: center; padding-top: 3rem;">
-    <div class="glass-card" style="padding: 3rem;">
-        <i class="fas fa-exclamation-triangle" style="font-size: 4rem; color: #FFA000; margin-bottom: 2rem;"></i>
-        <h2 style="color: #d32f2f; margin-bottom: 1rem;">Confirm Deletion</h2>
-        <p style="color: #666; margin-bottom: 2rem;">
-            Are you sure you want to delete <strong>{{ person.first_name }} {{ person.last_name }}</strong>?<br>
-            This action cannot be undone.
-        </p>
+<div
+    style="max-width: 600px; margin: 0 auto; background: white; padding: 2.5rem; border-radius: 20px; box-shadow: var(--shadow-lg); text-align: center;">
+    <i class="fas fa-exclamation-triangle" style="font-size: 4rem; color: #f44336; margin-bottom: 1.5rem;"></i>
+    <h2 class="text-secondary" style="font-weight: 800; margin-bottom: 1rem;">Are you sure?</h2>
+    <p class="text-muted" style="font-size: 1.1rem; margin-bottom: 2rem;">
+        Do you really want to delete <strong>{{ person.full_name }}</strong> from the directory? This action cannot be
+        undone.
+    </p>
 
-        <form method="post">
-            {% csrf_token %}
-            <div style="display: flex; gap: 1rem; justify-content: center;">
-                <button type="submit" class="btn-primary" style="background: #d32f2f; padding: 10px 30px;">Yes,
-                    Delete</button>
-                <a href="{% url 'manage_people' %}" class="btn-secondary"
-                    style="padding: 10px 30px; background: #eee; color: #333;">Cancel</a>
-            </div>
-        </form>
-    </div>
+    <form method="POST">
+        {% csrf_token %}
+        <div style="display: flex; gap: 1rem; justify-content: center;">
+            <button type="submit" class="btn-primary" style="background-color: #f44336; border-color: #f44336;">Yes,
+                Delete</button>
+            <a href="{% url 'people_directory' %}" class="btn-secondary">Cancel</a>
+        </div>
+    </form>
 </div>
 {% endblock %}

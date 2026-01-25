@@ -37,7 +37,7 @@
         <ul class="nav-links" id="nav-links">
             <li><a href="{% url 'home' %}">Home</a></li>
             {% if user.is_authenticated and user.can_view_directory or user.is_staff %}
-            <li><a href="{% url 'directory' %}">People Directory</a></li>
+            <li><a href="{% url 'people_directory' %}">People Directory</a></li>
             {% endif %}
             <li><a href="{% url 'media_list' %}">Gallery</a></li>
             <li><a href="{% url 'location_list' %}">Locations</a></li>

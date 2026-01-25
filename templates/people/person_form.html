@@ -1,104 +1,208 @@
 {% extends 'base/base.html' %}
-{% block title %}{{ title }} | KANTHA27{% endblock %}
+{% load static %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block extra_css %}
+<style>
+    .form-container {
+        max-width: 800px;
+        margin: 0 auto;
+        background: white;
+        padding: 2.5rem;
+        border-radius: 20px;
+        box-shadow: var(--shadow-lg);
+    }
+
+    .form-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.5rem;
+    }
+
+    .full-width {
+        grid-column: 1 / -1;
+    }
+
+    .radio-group {
+        display: flex;
+        gap: 2rem;
+        padding: 0.5rem 0;
+    }
+
+    .radio-group label {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-weight: 500;
+        cursor: pointer;
+    }
+
+    .form-group label {
+        display: block;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        color: var(--secondary-color);
+    }
+
+    .education-other-box {
+        margin-top: 0.5rem;
+    }
+
+    h2 {
+        font-weight: 800;
+        color: var(--secondary-color);
+        margin-bottom: 2rem;
+        border-bottom: 2px solid var(--primary-color);
+        display: inline-block;
+        padding-bottom: 0.5rem;
+    }
+</style>
+{% endblock %}
+
 {% block content %}
-<div style="max-width: 650px; margin: 0 auto;">
-    <div class="glass-card" style="padding: 2.5rem;">
-        <h2
-            style="color: var(--primary-color); margin-bottom: 2rem; text-align: center; font-weight: 800; letter-spacing: -1px;">
-            {{ title|upper }}</h2>
-        <form method="post" enctype="multipart/form-data">
-            {% csrf_token %}
-            <style>
-                .family-role-container {
-                    background: #fff8f0;
-                    padding: 1.5rem;
-                    border-radius: 12px;
-                    border: 1.5px solid var(--secondary-color);
-                    margin-bottom: 2rem;
-                }
+<div class="form-container">
+    <h2>{{ title }}</h2>
 
-                .radio-group-wrapper {
-                    display: flex;
-                    gap: 2rem;
-                    flex-wrap: wrap;
-                    margin-bottom: 1rem;
-                }
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
 
-                .radio-group label {
-                    display: inline-flex;
-                    align-items: center;
-                    margin-right: 1.5rem;
-                    cursor: pointer;
-                    font-weight: 600;
-                    color: var(--primary-color);
-                }
+        <div class="form-grid">
+            <div class="form-group full-width">
+                {{ form.photo.label_tag }}
+                {{ form.photo }}
+                {% if form.photo.errors %}<div class="text-danger">{{ form.photo.errors }}</div>{% endif %}
+            </div>
 
-                .radio-group input[type="radio"] {
-                    margin-right: 8px;
-                    transform: scale(1.2);
-                }
+            <div class="form-group full-width">
+                {{ form.full_name.label_tag }}
+                {{ form.full_name }}
+                {% if form.full_name.errors %}<div class="text-danger">{{ form.full_name.errors }}</div>{% endif %}
+            </div>
 
-                #family-group-field {
-                    transition: all 0.3s ease;
-                }
-            </style>
+            <div class="form-group">
+                {{ form.is_head.label_tag }}
+                {{ form.is_head }}
+                <small class="text-muted">(Check this if adding the Head of the Family)</small>
+            </div>
 
-            {% for field in form %}
-            {% if field.name == 'family_role' %}
-            <div class="family-role-container">
-                <div class="family-field">
-                    <label class="form-label" style="margin-bottom: 1rem;">{{ field.label }}</label>
-                    <div class="radio-group radio-group-wrapper">
-                        {{ field }}
-                    </div>
-                </div>
-                {% elif field.name == 'family_group' %}
-                <div class="family-field" id="family-group-field"
-                    style="display: none; border-top: 1px solid var(--secondary-color); padding-top: 1rem; margin-top: 1rem;">
-                    <label class="form-label" style="margin-bottom: 1rem;">{{ field.label }}</label>
-                    {{ field }}
+            <div id="hometown_group" class="form-group" style="display: none;">
+                {{ form.hometown.label_tag }}
+                {{ form.hometown }}
+                {% if form.hometown.errors %}<div class="text-danger">{{ form.hometown.errors }}</div>{% endif %}
+            </div>
+
+            <div class="form-group">
+                {{ form.relation_with_head.label_tag }}
+                {{ form.relation_with_head }}
+            </div>
+
+            <div class="form-group">
+                {{ form.marital_status.label_tag }}
+                <div class="radio-group">
+                    {% for radio in form.marital_status %}
+                    <label>{{ radio.tag }} {{ radio.label }}</label>
+                    {% endfor %}
                 </div>
             </div>
-            {% else %}
-            <div class="form-field-wrapper">
-                <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
-                {{ field }}
-                {% if field.help_text %}
-                <small style="color: #999; display: block; margin-top: 4px;">{{ field.help_text }}</small>
-                {% endif %}
-                {% if field.errors %}<div class="form-error">{{ field.errors.0 }}</div>{% endif %}
+
+            <div class="form-group">
+                {{ form.birth_date.label_tag }}
+                {{ form.birth_date }}
             </div>
-            {% endif %}
-            {% endfor %}
 
-            <script>
-                document.addEventListener('DOMContentLoaded', function () {
-                    const headRadio = document.querySelector('input[name="family_role"][value="head"]');
-                    const memberRadio = document.querySelector('input[name="family_role"][value="member"]');
-                    const familyGroupField = document.getElementById('family-group-field');
-
-                    function toggleFamilyGroup() {
-                        if (memberRadio.checked) {
-                            familyGroupField.style.display = 'block';
-                        } else {
-                            familyGroupField.style.display = 'none';
-                        }
-                    }
-
-                    if (headRadio && memberRadio) {
-                        headRadio.addEventListener('change', toggleFamilyGroup);
-                        memberRadio.addEventListener('change', toggleFamilyGroup);
-                        toggleFamilyGroup(); // Initial state
-                    }
-                });
-            </script>
-            <div style="margin-top: 2.5rem; display: flex; gap: 1rem;">
-                <button type="submit" class="btn-primary" style="flex: 2; padding: 15px; font-weight: 700;">SAVE MEMBER
-                    PROFILE</button>
-                <a href="{% url 'manage_people' %}" class="btn-secondary"
-                    style="flex: 1; text-align: center; background: #eee; color: #333; padding: 15px; border-radius: 10px; font-weight: 600;">CANCEL</a>
+            <div class="form-group">
+                {{ form.blood_group.label_tag }}
+                {{ form.blood_group }}
             </div>
-        </form>
-    </div>
+
+            <div class="form-group">
+                {{ form.education.label_tag }}
+                {{ form.education }}
+            </div>
+
+            <div id="education_other_group" class="form-group" style="display: none;">
+                {{ form.education_other.label_tag }}
+                {{ form.education_other }}
+            </div>
+
+            <div class="form-group">
+                {{ form.job.label_tag }}
+                {{ form.job }}
+            </div>
+
+            <div class="form-group">
+                {{ form.mobile_number.label_tag }}
+                {{ form.mobile_number }}
+            </div>
+
+            <div class="form-group">
+                {{ form.maternal_home.label_tag }}
+                {{ form.maternal_home }}
+            </div>
+
+            <div class="form-group">
+                {{ form.family.label_tag }}
+                {{ form.family }}
+                <small class="text-muted">(Leave blank if this is the Head)</small>
+            </div>
+
+            <div class="form-group full-width">
+                {{ form.address.label_tag }}
+                {{ form.address }}
+            </div>
+
+            <div class="form-group">
+                {{ form.parent_person.label_tag }}
+                {{ form.parent_person }}
+                <small class="text-muted">(For Grandchildren logic: select their parent who is a child in this
+                    family)</small>
+            </div>
+        </div>
+
+        <div style="margin-top: 2rem; display: flex; gap: 1rem;">
+            <button type="submit" class="btn-primary">Save Profile</button>
+            <a href="{% url 'people_directory' %}" class="btn-secondary">Cancel</a>
+        </div>
+    </form>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function toggleEducationOther(select) {
+        const otherGroup = document.getElementById('education_other_group');
+        const otherInput = document.getElementById('id_education_other');
+        if (select.value === 'OTHER') {
+            otherGroup.style.display = 'block';
+            otherInput.style.display = 'block';
+            otherInput.required = true;
+        } else {
+            otherGroup.style.display = 'none';
+            otherInput.style.display = 'none';
+            otherInput.required = false;
+        }
+    }
+
+    function toggleHometown() {
+        const isHeadCheckbox = document.querySelector('input[name="is_head"]');
+        const hometownGroup = document.getElementById('hometown_group');
+        if (isHeadCheckbox.checked) {
+            hometownGroup.style.display = 'block';
+        } else {
+            hometownGroup.style.display = 'none';
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const eduSelect = document.querySelector('select[name="education"]');
+        if (eduSelect) toggleEducationOther(eduSelect);
+
+        const isHeadCheckbox = document.querySelector('input[name="is_head"]');
+        if (isHeadCheckbox) {
+            toggleHometown();
+            isHeadCheckbox.addEventListener('change', toggleHometown);
+        }
+    });
+</script>
 {% endblock %}

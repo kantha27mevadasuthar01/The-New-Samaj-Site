@@ -1,17 +1,17 @@
 from django.contrib import admin
 from kantha_project.admin_site import kantha_admin_site
-from .models import Person, FamilyGroup
+from .models import Person, Family
 
-class FamilyGroupAdmin(admin.ModelAdmin):
-    list_display = ('name', 'village')
-    search_fields = ('name', 'village')
+class FamilyAdmin(admin.ModelAdmin):
+    list_display = ('head', 'hometown')
+    search_fields = ('head__full_name', 'hometown')
 
 @admin.register(Person)
 class PersonAdmin(admin.ModelAdmin):
-    list_display = ('full_name', 'family_group', 'native_gam', 'current_city', 'age', 'is_family_head')
-    list_filter = ('native_gam', 'current_city', 'is_family_head', 'family_group')
-    search_fields = ('full_name', 'native_gam', 'current_city', 'family_group__name')
-    ordering = ('-is_family_head', 'full_name')
+    list_display = ('full_name', 'family', 'relation_with_head', 'marital_status', 'is_head')
+    list_filter = ('family__hometown', 'marital_status', 'is_head', 'blood_group')
+    search_fields = ('full_name', 'family__hometown', 'job')
+    ordering = ('family__hometown', 'full_name')
 
-kantha_admin_site.register(FamilyGroup, FamilyGroupAdmin)
+kantha_admin_site.register(Family, FamilyAdmin)
 kantha_admin_site.register(Person, PersonAdmin)
