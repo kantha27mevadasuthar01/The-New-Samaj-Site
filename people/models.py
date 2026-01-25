@@ -51,7 +51,7 @@ class Person(models.Model):
 
     photo = models.ImageField(upload_to='people_photos/', blank=True, null=True)
     full_name = models.CharField(max_length=200, verbose_name="Full Name")
-    relation_with_head = models.CharField(max_length=20, choices=RELATION_CHOICES)
+    relation_with_head = models.CharField(max_length=20, choices=RELATION_CHOICES, default='OTHER')
     is_head = models.BooleanField(default=False, verbose_name="Is Head of Family")
     marital_status = models.CharField(max_length=10, choices=MARITAL_STATUS_CHOICES, default='UNMARRIED')
     
