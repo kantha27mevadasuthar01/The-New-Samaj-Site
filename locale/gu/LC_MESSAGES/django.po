@@ -1,0 +1,94 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: kantha_project\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-01-26 13:55+0530\n"
+"PO-Revision-Date: 2026-01-26 13:55+0530\n"
+"Last-Translator: Antigravity\n"
+"Language-Team: Gujarati\n"
+"Language: gu\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "Home"
+msgstr "હોમ"
+
+msgid "Our Team"
+msgstr "અમારી ટીમ"
+
+msgid "Gallery"
+msgstr "ગેલેરી"
+
+msgid "Locations"
+msgstr "સ્થળો"
+
+msgid "Explore"
+msgstr "વધુ જુઓ"
+
+msgid "People Directory"
+msgstr "લોકોની ડાયરેક્ટરી"
+
+msgid "Admin Portal"
+msgstr "એડમિન પોર્ટલ"
+
+msgid "Logout"
+msgstr "લોગ આઉટ"
+
+msgid "Login"
+msgstr "લોગિન"
+
+msgid "Join Now"
+msgstr "જોડાઓ"
+
+msgid "Donate"
+msgstr "દાન"
+
+msgid "Executive Committee"
+msgstr "કાર્યકારી સમિતિ"
+
+msgid "Add Member"
+msgstr "સભ્ય ઉમેરો"
+
+msgid "Name"
+msgstr "નામ"
+
+msgid "Designation"
+msgstr "હોદ્દો"
+
+msgid "Village"
+msgstr "ગામ"
+
+msgid "Mobile No."
+msgstr "મોબાઇલ નં."
+
+msgid "Actions"
+msgstr "કાર્યો"
+
+msgid "No committee members found."
+msgstr "કોઈ સમિતિ સભ્યો મળ્યા નથી."
+
+msgid "Save Changes"
+msgstr "ફેરફારો સાચવો"
+
+msgid "Cancel"
+msgstr "રદ કરો"
+
+msgid "Are you sure?"
+msgstr "શું તમે ખાતરી કરો છો?"
+
+msgid "Do you really want to delete"
+msgstr "શું તમે ખરેખર કાઢી નાખવા માંગો છો"
+
+msgid "This action cannot be undone."
+msgstr "આ ક્રિયા પૂર્વવત્ કરી શકાતી નથી."
+
+msgid "Confirm Delete"
+msgstr "નિકાલની પુષ્ટિ કરો"
+
+msgid "English"
+msgstr "અંગ્રેજી"
+
+msgid "Gujarati"
+msgstr "ગુજરાતી"

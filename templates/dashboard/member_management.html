@@ -1,0 +1,78 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block title %}Member Management | Kantha27{% endblock %}
+
+{% block content %}
+<div class="header-section" style="margin-bottom: 2rem;">
+    <h1>Member Permissions</h1>
+    <p>Manage access to People Directory (View & Download).</p>
+</div>
+
+<div class="glass-card">
+    <div
+        style="margin-bottom: 1.5rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+        <form method="get" action="" style="display: flex; gap: 0.5rem; flex: 1; max-width: 400px;">
+            <input type="text" name="q" placeholder="Search by username or email..." value="{{ request.GET.q }}"
+                style="padding: 10px; border-radius: 8px; border: 1px solid #ccc; flex: 1;">
+            <button type="submit" class="btn-primary">Search</button>
+        </form>
+    </div>
+
+    <div style="overflow-x: auto;">
+        <table style="width: 100%; border-collapse: collapse; min-width: 600px;">
+            <thead style="background: rgba(0,0,0,0.05); border-bottom: 2px solid var(--primary-color);">
+                <tr>
+                    <th style="padding: 12px; text-align: left;">User</th>
+                    <th style="padding: 12px; text-align: left;">Role</th>
+                    <th style="padding: 12px; text-align: center;">View Directory</th>
+                    <th style="padding: 12px; text-align: center;">Download Directory</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for member in members %}
+                <tr style="border-bottom: 1px solid rgba(0,0,0,0.1);">
+                    <td style="padding: 12px;">
+                        <strong>{{ member.username }}</strong><br>
+                        <small style="color: #666;">{{ member.email }}</small>
+                    </td>
+                    <td style="padding: 12px;">
+                        <span class="badge">
+                            {{ member.get_role_display }}
+                        </span>
+                    </td>
+                    <td style="padding: 12px; text-align: center;">
+                        <form method="post" style="display: inline;">
+                            {% csrf_token %}
+                            <input type="hidden" name="user_id" value="{{ member.id }}">
+                            <input type="hidden" name="action" value="toggle_view">
+                            <button type="submit"
+                                class="btn-sm {% if member.can_view_directory %}btn-success{% else %}btn-danger{% endif %}"
+                                style="border: none; border-radius: 20px; width: 60px; cursor: pointer;">
+                                {% if member.can_view_directory %}ON{% else %}OFF{% endif %}
+                            </button>
+                        </form>
+                    </td>
+                    <td style="padding: 12px; text-align: center;">
+                        <form method="post" style="display: inline;">
+                            {% csrf_token %}
+                            <input type="hidden" name="user_id" value="{{ member.id }}">
+                            <input type="hidden" name="action" value="toggle_download">
+                            <button type="submit"
+                                class="btn-sm {% if member.can_download_directory %}btn-success{% else %}btn-danger{% endif %}"
+                                style="border: none; border-radius: 20px; width: 60px; cursor: pointer;">
+                                {% if member.can_download_directory %}ON{% else %}OFF{% endif %}
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="4" style="padding: 2rem; text-align: center;">No members found.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

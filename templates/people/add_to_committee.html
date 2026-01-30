@@ -1,0 +1,168 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block title %}Add to Committee - SJMS{% endblock %}
+
+{% block extra_css %}
+<style>
+    .committee-form-card {
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        max-width: 800px;
+        margin: 2rem auto;
+        overflow: hidden;
+    }
+
+    .card-header {
+        background: var(--primary-color);
+        color: white;
+        padding: 1.5rem;
+        text-align: center;
+    }
+
+    .card-body {
+        padding: 2rem;
+    }
+
+    .person-summary {
+        background: #f8f9fa;
+        border-radius: 10px;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
+        border-left: 5px solid var(--secondary-color);
+    }
+
+    .person-photo {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 3px solid white;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    .person-details h3 {
+        margin: 0 0 0.5rem 0;
+        color: var(--secondary-color);
+    }
+
+    .person-details p {
+        margin: 0;
+        color: #666;
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 600;
+        color: #333;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 0.8rem;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        font-size: 1rem;
+        transition: border-color 0.3s;
+    }
+
+    .form-control:focus {
+        border-color: var(--primary-color);
+        outline: none;
+    }
+
+    .info-box {
+        background: #e3f2fd;
+        color: #0d47a1;
+        padding: 1rem;
+        border-radius: 8px;
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.8rem;
+    }
+
+    .btn-submit {
+        background: var(--primary-color);
+        color: white;
+        border: none;
+        padding: 1rem 2rem;
+        border-radius: 8px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        width: 100%;
+        cursor: pointer;
+        transition: background 0.3s;
+    }
+
+    .btn-submit:hover {
+        background: var(--secondary-color);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="committee-form-card">
+    <div class="card-header">
+        <h2><i class="fas fa-crown"></i> Add to Our Team</h2>
+    </div>
+
+    <div class="card-body">
+        <div class="person-summary">
+            {% if person.photo %}
+            <img src="{{ person.photo.url }}" alt="{{ person.full_name }}" class="person-photo">
+            {% else %}
+            <img src="{% static 'img/default_profile.png' %}" alt="Default Profile" class="person-photo">
+            {% endif %}
+
+            <div class="person-details">
+                <h3>{{ person.full_name }}</h3>
+                <p><i class="fas fa-map-marker-alt"></i> {{ person.family.hometown|default:"Unknown Village" }}</p>
+                <p><i class="fas fa-phone"></i> {{ person.mobile_number|default:"N/A" }}</p>
+            </div>
+        </div>
+
+        <div class="info-box">
+            <i class="fas fa-info-circle"></i>
+            <div>
+                <strong>Available Slots: {{ available_slots }}</strong><br>
+                Only positions with vacancy are shown below.
+            </div>
+        </div>
+
+        <form method="post">
+            {% csrf_token %}
+
+            {% for field in form %}
+            <div class="form-group">
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+                {% if field.help_text %}
+                <small class="text-muted">{{ field.help_text }}</small>
+                {% endif %}
+                {% if field.errors %}
+                <div class="text-danger">
+                    {{ field.errors }}
+                </div>
+                {% endif %}
+            </div>
+            {% endfor %}
+
+            <div style="display: flex; gap: 1rem; margin-top: 2rem;">
+                <a href="{% url 'people_directory' %}" class="btn-secondary"
+                    style="flex: 1; text-align: center; padding: 1rem; border-radius: 8px; background: #eee; color: #333; text-decoration: none;">Cancel</a>
+                <button type="submit" class="btn-submit" style="flex: 2;">Confirm Addition</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

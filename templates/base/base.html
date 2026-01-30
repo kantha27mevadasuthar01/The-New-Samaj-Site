@@ -1,5 +1,7 @@
 <!DOCTYPE html>
 {% load static %}
+{% load i18n %}
+{% load news_tags %}
 <html lang="en">
 
 <head>
@@ -27,7 +29,11 @@
     <nav class="navbar">
         <a href="{% url 'home' %}" class="nav-brand">
             <img src="{% static 'img/logo.png' %}" alt="Logo" class="nav-logo">
-            <span>Shree Kantha 27 Mevada Suthar Samaj</span>
+            <div style="display: flex; flex-direction: column; line-height: 1.1;">
+                <span style="font-size: 1.2rem; font-weight: 800;">Shree Kantha 27 Mevada Suthar Samaj</span>
+                <span style="font-size: 0.8rem; font-weight: 400; opacity: 0.9;">& Shree 27 Mevada Suthar Sarvjanik
+                    Vishavkarma Mandir Trust</span>
+            </div>
         </a>
 
         <div class="hamburger" id="hamburger-menu">
@@ -35,51 +41,115 @@
         </div>
 
         <ul class="nav-links" id="nav-links">
-            <li><a href="{% url 'home' %}">Home</a></li>
-            {% if user.is_authenticated and user.can_view_directory or user.is_staff %}
-            <li><a href="{% url 'people_directory' %}">People Directory</a></li>
-            {% endif %}
-            <li><a href="{% url 'media_list' %}">Gallery</a></li>
-            <li><a href="{% url 'location_list' %}">Locations</a></li>
-
-            {% if user.is_authenticated %}
-            <li><a href="{% url 'donate_view' %}" class="btn-secondary" style="padding: 0.5rem 1rem;">Donate</a></li>
-            {% if user.is_staff %}
-            <li><a href="{% url 'staff_portal' %}" class="text-accent" style="font-weight: bold;">Staff Portal</a></li>
-            {% endif %}
+            <li><a href="{% url 'home' %}">{% trans "Home" %}</a></li>
+            <li><a href="{% url 'committee_list' %}">{% trans "Our Team" %}</a></li>
+            <li><a href="{% url 'media_list' %}">{% trans "Gallery" %}</a></li>
+            <li><a href="{% url 'location_list' %}">{% trans "Locations" %}</a></li>
             <li>
-                <form id="logout-form" action="{% url 'logout' %}" method="post" style="display: none;">
-                    {% csrf_token %}
-                </form>
-                <a href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                    Logout ({{ user.username }})
-                </a>
+                <button id="theme-toggle" class="theme-toggle-btn" title="Toggle Theme">
+                    <i class="fas fa-moon"></i>
+                </button>
             </li>
-            {% else %}
-            <li><a href="{% url 'login' %}">Login</a></li>
-            <li><a href="{% url 'register' %}" class="btn-primary" style="padding: 0.5rem 1rem;">Join Now</a></li>
-            {% endif %}
         </ul>
     </nav>
 
-    <!-- Main Content -->
-    <main style="padding: 2rem 5%; min-height: 80vh;">
-        {% if messages %}
-        <div class="toast-container" style="position: fixed; top: 100px; right: 20px; z-index: 9999;">
-            {% for message in messages %}
-            <div
-                style="background: white; padding: 1rem; margin-bottom: 1rem; border-left: 5px solid var(--primary-color); box-shadow: var(--shadow-lg); border-radius: 4px;">
-                {{ message }}
-            </div>
-            {% endfor %}
-        </div>
-        {% endif %}
+    <div class="app-container">
+        <!-- Sidebar Trigger Area -->
+        <div class="sidebar-trigger"></div>
+        <!-- Sidebar -->
+        <aside class="app-sidebar" id="app-sidebar">
+            <div class="sidebar-top">
 
-        {% block content %}
-        {% endblock %}
-    </main>
+
+                <div class="sidebar-header">
+                    <i class="fas fa-th-large"></i> {% trans "Main Menu" %}
+                </div>
+
+                <nav class="sidebar-nav">
+                    {% if user.is_authenticated and user.can_view_directory or user.is_staff %}
+                    <a href="{% url 'people_directory' %}" class="sidebar-item">
+                        <i class="fas fa-users"></i> <span>{% trans "People Directory" %}</span>
+                    </a>
+                    {% endif %}
+
+                    {% if user.is_staff %}
+                    <a href="{% url 'staff_portal' %}" class="sidebar-item">
+                        <i class="fas fa-user-shield"></i> <span>{% trans "Admin Portal" %}</span>
+                    </a>
+                    {% endif %}
+
+                    <div class="sidebar-divider"></div>
+
+                    <div class="sidebar-header">
+                        <i class="fas fa-globe"></i> {% trans "Language" %}
+                    </div>
+
+                    <div class="sidebar-lang">
+                        <form action="{% url 'set_language' %}" method="post" class="lang-form">
+                            {% csrf_token %}
+                            <input name="next" type="hidden" value="{{ request.get_full_path }}">
+                            <input name="language" type="hidden" value="en">
+                            <button type="submit"
+                                class="lang-btn {% if request.LANGUAGE_CODE == 'en' %}active{% endif %}">EN</button>
+                        </form>
+                        <form action="{% url 'set_language' %}" method="post" class="lang-form">
+                            {% csrf_token %}
+                            <input name="next" type="hidden" value="{{ request.get_full_path }}">
+                            <input name="language" type="hidden" value="gu">
+                            <button type="submit"
+                                class="lang-btn {% if request.LANGUAGE_CODE == 'gu' %}active{% endif %}">GU</button>
+                        </form>
+                    </div>
+
+                    <div class="sidebar-divider"></div>
+
+                    <a href="{% url 'donate_view' %}" class="sidebar-item donate-link">
+                        <i class="fas fa-heart"></i> <span>{% trans "Donate Now" %}</span>
+                    </a>
+                </nav>
+            </div>
+
+            <div class="sidebar-bottom" style="margin-top: auto;">
+                {% if user.is_authenticated %}
+                <form id="sidebar-logout-form" action="{% url 'logout' %}" method="post" style="display: none;">
+                    {% csrf_token %}
+                </form>
+                <a href="#" class="sidebar-item logout-item" style="color: #ff4d4d;"
+                    onclick="event.preventDefault(); document.getElementById('sidebar-logout-form').submit();">
+                    <i class="fas fa-sign-out-alt" style="color: #ff4d4d;"></i> <span>{% trans "Logout" %}</span>
+                </a>
+                {% else %}
+                <a href="{% url 'login' %}" class="sidebar-item">
+                    <i class="fas fa-sign-in-alt"></i> <span>{% trans "Login" %}</span>
+                </a>
+                <a href="{% url 'register' %}" class="sidebar-item">
+                    <i class="fas fa-user-plus"></i> <span>{% trans "Join Community" %}</span>
+                </a>
+                {% endif %}
+            </div>
+        </aside>
+
+        <div class="page-content">
+            <main style="padding: 2rem 5%; min-height: 80vh;">
+                {% if messages %}
+                <div class="toast-container" style="position: fixed; top: 100px; right: 20px; z-index: 9999;">
+                    {% for message in messages %}
+                    <div
+                        style="background: var(--glass-bg); backdrop-filter: blur(5px); color: var(--text-color); padding: 1rem; margin-bottom: 1rem; border-left: 5px solid var(--primary-color); box-shadow: var(--shadow-lg); border-radius: 4px;">
+                        {{ message }}
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                {% block content %}
+                {% endblock %}
+            </main>
+        </div>
+    </div>
 
     <!-- Footer -->
+    {% news_ticker %}
     <footer>
         <p>&copy; 2026 Kantha27 Mevada Suthar Samaj. Connected by Heritage.</p>
     </footer>
@@ -87,15 +157,15 @@
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const hamburger = document.getElementById('hamburger-menu');
-            const navLinks = document.getElementById('nav-links');
+            const sidebar = document.getElementById('app-sidebar');
 
-            if (hamburger) {
+            if (hamburger && sidebar) {
                 hamburger.addEventListener('click', () => {
-                    navLinks.classList.toggle('active');
+                    sidebar.classList.toggle('active');
 
                     // Toggle icon
                     const icon = hamburger.querySelector('i');
-                    if (navLinks.classList.contains('active')) {
+                    if (sidebar.classList.contains('active')) {
                         icon.classList.remove('fa-bars');
                         icon.classList.add('fa-times');
                     } else {
@@ -106,6 +176,7 @@
             }
         });
     </script>
+    <script src="{% static 'js/theme_toggle.js' %}"></script>
     {% block extra_js %}{% endblock %}
 </body>
 

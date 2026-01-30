@@ -1,0 +1,60 @@
+{% extends 'base/base.html' %}
+
+{% block title %}Manage News | Kantha27{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1><i class="fas fa-bullhorn"></i> Manage News</h1>
+    <p>Create and manage scrolling announcements.</p>
+</div>
+
+<div class="glass-card" style="padding: 2rem;">
+    <div style="margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: center;">
+        <h2 style="margin: 0; color: var(--primary-color);">Announcements</h2>
+        <a href="{% url 'news_create' %}" class="btn-primary"><i class="fas fa-plus"></i> Add New</a>
+    </div>
+
+    <div style="overflow-x: auto;">
+        <table style="width: 100%; border-collapse: collapse; min-width: 600px;">
+            <thead>
+                <tr style="text-align: left; border-bottom: 2px solid var(--primary-color);">
+                    <th style="padding: 1rem; color: var(--primary-text-dark);">Message</th>
+                    <th style="padding: 1rem; color: var(--primary-text-dark);">Status</th>
+                    <th style="padding: 1rem; color: var(--primary-text-dark);">Speed</th>
+                    <th style="padding: 1rem; color: var(--primary-text-dark);">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in news_items %}
+                <tr style="border-bottom: 1px solid #eee;">
+                    <td style="padding: 1rem; color: var(--text-color);">{{ item.message|truncatechars:50 }}</td>
+                    <td style="padding: 1rem;">
+                        {% if item.is_active %}
+                        <span class="badge" style="background-color: #2ecc71; color: white;">Active</span>
+                        {% else %}
+                        <span class="badge" style="background-color: #95a5a6; color: white;">Inactive</span>
+                        {% endif %}
+                    </td>
+                    <td style="padding: 1rem; color: var(--text-color);">{{ item.scroll_speed }}s</td>
+                    <td style="padding: 1rem;">
+                        <a href="{% url 'news_edit' item.pk %}"
+                            style="margin-right: 10px; color: var(--primary-color);"><i class="fas fa-edit"></i>
+                            Edit</a>
+                        <a href="{% url 'news_delete' item.pk %}" style="color: #e74c3c;"><i class="fas fa-trash"></i>
+                            Delete</a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="4" style="text-align: center; padding: 2rem; color: #666;">No announcements yet.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div style="margin-top: 2rem; text-align: center;">
+        <a href="{% url 'staff_portal' %}" class="btn-secondary">Back to Admin Portal</a>
+    </div>
+</div>
+{% endblock %}

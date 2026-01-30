@@ -1,0 +1,123 @@
+{% extends 'base/base.html' %}
+{% load i18n %}
+
+{% block title %}{% trans "Our Team" %} - Shree Kantha 27 Mevada Suthar Samaj{% endblock %}
+
+{% block content %}
+<div class="committee-container">
+    <div style="text-align: center; margin-bottom: 2rem;">
+        <h1 class="text-accent" style="margin-bottom: 0.5rem; font-weight: 800; font-size: 2.2rem;">
+            {% trans "Kantha 27 Mevad Suthar Samaj Karobari Samiti" %}
+        </h1>
+        <div style="display: flex; justify-content: center; align-items: center; gap: 1rem;">
+            <p style="font-size: 1.2rem; opacity: 0.8; margin: 0;">
+                {% if settings %}
+                {{ settings.start_year }} - {{ settings.end_year }}
+                {% else %}
+                2025 - 2026
+                {% endif %}
+            </p>
+            {% if user.is_authenticated and user.role in 'ADMIN SUB_ADMIN' or user.is_superuser %}
+            <a href="{% url 'committee_settings' %}" class="text-accent" title="Edit Years" style="font-size: 0.9rem;">
+                <i class="fas fa-calendar-alt"></i>
+            </a>
+            {% endif %}
+        </div>
+    </div>
+
+    <div style="display: flex; justify-content: flex-end; margin-bottom: 1rem;">
+        {% if user.is_authenticated and user.role in 'ADMIN SUB_ADMIN' or user.is_superuser %}
+        <a href="{% url 'committee_create' %}" class="btn-primary">
+            <i class="fas fa-plus"></i> {% trans "Add Member" %}
+        </a>
+        {% endif %}
+    </div>
+
+    <div class="table-responsive"
+        style="background: var(--glass-bg); padding: 1.5rem; border-radius: 12px; backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1);">
+        <table class="data-table" style="width: 100%; border-collapse: collapse;">
+            <thead>
+                <tr style="border-bottom: 2px solid var(--primary-color);">
+                    <th style="padding: 1rem; text-align: left;">#</th>
+                    <th style="padding: 1rem; text-align: left;">{% trans "Name" %}</th>
+                    <th style="padding: 1rem; text-align: left;">{% trans "Designation" %}</th>
+                    <th style="padding: 1rem; text-align: left;">{% trans "Village" %}</th>
+                    <th style="padding: 1rem; text-align: left;">{% trans "Mobile No." %}</th>
+                    <th style="padding: 1rem; text-align: center;">{% trans "Copy Info" %}</th>
+                    {% if user.is_authenticated and user.role in 'ADMIN SUB_ADMIN' or user.is_superuser %}
+                    <th style="padding: 1rem; text-align: center;">{% trans "Actions" %}</th>
+                    {% endif %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for member in members %}
+                <tr style="border-bottom: 1px solid rgba(255, 255, 255, 0.05); transition: background 0.3s;"
+                    onmouseover="this.style.background='rgba(255, 255, 255, 0.05)'"
+                    onmouseout="this.style.background='transparent'">
+                    <td style="padding: 1rem;">{{ forloop.counter }}</td>
+                    <td style="padding: 1rem; font-weight: bold;">{{ member.name }}</td>
+                    <td style="padding: 1rem;">
+                        <span
+                            style="background: var(--primary-color); color: white; padding: 0.2rem 0.6rem; border-radius: 4px; font-size: 0.9rem;">
+                            {{ member.get_designation_display }}
+                        </span>
+                    </td>
+                    <td style="padding: 1rem;">{{ member.village }}</td>
+                    <td style="padding: 1rem;">{{ member.mobile_number }}</td>
+                    <td style="padding: 1rem; text-align: center;">
+                        <button class="btn-copy"
+                            onclick="copyMemberInfo(event, '{{ member.name|escapejs }}', '{{ member.designation|escapejs }}', '{{ member.village|escapejs }}', '{{ member.mobile_number|escapejs }}')"
+                            style="background: none; border: none; cursor: pointer; color: var(--primary-color); transition: transform 0.2s;">
+                            <i class="fas fa-copy"></i>
+                        </button>
+                    </td>
+                    {% if user.is_authenticated and user.role in 'ADMIN SUB_ADMIN' or user.is_superuser %}
+                    <td style="padding: 1rem; text-align: center;">
+                        <a href="{% url 'committee_update' member.pk %}" class="text-accent"
+                            style="margin-right: 1rem;"><i class="fas fa-edit"></i></a>
+                        <a href="{% url 'committee_delete' member.pk %}" style="color: #ff4d4d;"><i
+                                class="fas fa-trash"></i></a>
+                    </td>
+                    {% endif %}
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="7" style="padding: 2rem; text-align: center; opacity: 0.7;">
+                        {% trans "No committee members found." %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    function copyMemberInfo(event, name, designation, village, mobile) {
+        const textToCopy = `🌟 *Shree Kantha 27 Mevada Suthar Samaj* 🌟\n---\n👤 *Name*: ${name}\n🏷️ *Designation*: ${designation}\n🏡 *Village*: ${village}\n📞 *Mobile*: ${mobile}`;
+
+        navigator.clipboard.writeText(textToCopy).then(() => {
+            const btn = event.currentTarget;
+            const icon = btn.querySelector('i');
+            const originalClass = icon.className;
+
+            icon.className = 'fas fa-check';
+            icon.style.color = '#2ecc71';
+
+            setTimeout(() => {
+                icon.className = originalClass;
+                icon.style.color = '';
+            }, 2000);
+        }).catch(err => {
+            console.error('Failed to copy info: ', err);
+            alert('Failed to copy to clipboard');
+        });
+    }
+</script>
+
+<style>
+    .btn-copy:hover {
+        transform: scale(1.3);
+    }
+</style>
+{% endblock %}

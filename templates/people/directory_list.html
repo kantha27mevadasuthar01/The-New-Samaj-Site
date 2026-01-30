@@ -244,6 +244,27 @@
                 <a href="{% url 'delete_person' person.pk %}" class="btn-icon btn-delete" title="Delete">
                     <i class="fas fa-trash"></i>
                 </a>
+
+                {% if person.committee_memberships.exists %}
+                <button class="btn-icon" style="background-color: #4CAF50; cursor: default;"
+                    title="Already in Committee">
+                    <i class="fas fa-check-circle"></i>
+                </button>
+                {% else %}
+                {% if committee_full %}
+                <span class="d-inline-block" tabindex="0" data-toggle="tooltip" title="Committee is full (47 members)">
+                    <button class="btn-icon" style="background-color: #ccc; cursor: not-allowed;" disabled>
+                        <i class="fas fa-user-plus"></i>
+                    </button>
+                </span>
+                {% else %}
+                <a href="{% url 'add_to_committee' person.pk %}" class="btn-icon" style="background-color: #2196F3;"
+                    title="Add to Our Team">
+                    <i class="fas fa-user-plus"></i>
+                </a>
+                {% endif %}
+                {% endif %}
+
                 {% endif %}
             </div>
         </div>

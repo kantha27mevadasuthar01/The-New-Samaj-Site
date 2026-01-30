@@ -53,3 +53,39 @@ def create_sub_admin(request):
 def view_audit_logs(request):
     logs = AuditLog.objects.all()[:50] # Show last 50 actions
     return render(request, 'dashboard/audit_logs.html', {'logs': logs})
+
+@sub_admin_required
+def member_management(request):
+    """
+    View for Admins/Sub-Admins to manage member permissions (View/Download Directory).
+    """
+    members = User.objects.exclude(is_superuser=True).order_by('-date_joined') # Exclude superusers to prevent accidental lockouts or listing
+    
+    # Simple search
+    query = request.GET.get('q')
+    if query:
+        members = members.filter(username__icontains=query) | members.filter(email__icontains=query)
+
+    if request.method == 'POST':
+        user_id = request.POST.get('user_id')
+        action = request.POST.get('action')
+        target_user = get_object_or_404(User, id=user_id)
+        
+        # Log the change
+        log_details = f"Details for {target_user.username}: "
+
+        if action == 'toggle_view':
+            target_user.can_view_directory = not target_user.can_view_directory
+            log_details += f"View Directory {'Granted' if target_user.can_view_directory else 'Revoked'}"
+        
+        elif action == 'toggle_download':
+            target_user.can_download_directory = not target_user.can_download_directory
+            log_details += f"Download Directory {'Granted' if target_user.can_download_directory else 'Revoked'}"
+            
+        target_user.save()
+        log_action(request.user, "Updated Permissions", target_user.username, log_details)
+        messages.success(request, f"Updated permissions for {target_user.username}")
+            
+        return redirect('member_management')
+
+    return render(request, 'dashboard/member_management.html', {'members': members})

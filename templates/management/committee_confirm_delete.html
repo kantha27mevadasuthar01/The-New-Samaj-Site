@@ -1,0 +1,25 @@
+{% extends 'base/base.html' %}
+{% load i18n %}
+
+{% block title %}{% trans "Confirm Delete" %} - Shree Kantha 27 Mevada Suthar Samaj{% endblock %}
+
+{% block content %}
+<div
+    style="max-width: 500px; margin: 4rem auto; text-align: center; background: var(--glass-bg); padding: 3rem; border-radius: 12px; backdrop-filter: blur(10px);">
+    <i class="fas fa-exclamation-triangle" style="font-size: 3rem; color: #ff4d4d; margin-bottom: 1.5rem;"></i>
+    <h2 style="margin-bottom: 1rem;">{% trans "Are you sure?" %}</h2>
+    <p style="margin-bottom: 2rem; opacity: 0.8;">
+        {% trans "Do you really want to delete" %} <strong>{{ member.name }}</strong>?
+        {% trans "This action cannot be undone." %}
+    </p>
+
+    <form method="post">
+        {% csrf_token %}
+        <div style="display: flex; justify-content: center; gap: 1rem;">
+            <button type="submit" class="btn-primary" style="background: #ff4d4d; border-color: #ff4d4d;">{% trans
+                "Delete" %}</button>
+            <a href="{% url 'committee_list' %}" class="btn-secondary">{% trans "Cancel" %}</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

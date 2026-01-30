@@ -32,6 +32,7 @@ class User(AbstractUser):
     email = models.EmailField(unique=True)
     phone_number = models.CharField(max_length=15, unique=True, blank=True, null=True)
     can_view_directory = models.BooleanField(default=False, verbose_name="Can view People Directory")
+    can_download_directory = models.BooleanField(default=False, verbose_name="Can download People Directory")
     
     def is_samaj_admin(self):
         return self.role in [self.Role.ADMIN, self.Role.SUB_ADMIN] or self.is_superuser

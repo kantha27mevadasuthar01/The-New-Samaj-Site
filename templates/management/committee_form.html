@@ -1,0 +1,32 @@
+{% extends 'base/base.html' %}
+{% load i18n %}
+
+{% block title %}{{ title }} - Shree Kantha 27 Mevada Suthar Samaj{% endblock %}
+
+{% block content %}
+<div
+    style="max-width: 600px; margin: 2rem auto; background: var(--glass-bg); padding: 2rem; border-radius: 12px; backdrop-filter: blur(10px);">
+    <h2 class="text-accent" style="margin-bottom: 1.5rem;">{% trans title %}</h2>
+
+    <form method="post" class="standard-form">
+        {% csrf_token %}
+        {% for field in form %}
+        <div style="margin-bottom: 1.2rem;">
+            <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">{{ field.label }}</label>
+            {{ field }}
+            {% if field.help_text %}
+            <small style="display: block; opacity: 0.7; margin-top: 0.2rem;">{{ field.help_text }}</small>
+            {% endif %}
+            {% for error in field.errors %}
+            <span style="color: #ff4d4d; font-size: 0.85rem;">{{ error }}</span>
+            {% endfor %}
+        </div>
+        {% endfor %}
+
+        <div style="margin-top: 2rem; display: flex; gap: 1rem;">
+            <button type="submit" class="btn-primary">{% trans "Save Changes" %}</button>
+            <a href="{% url 'committee_list' %}" class="btn-secondary">{% trans "Cancel" %}</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

@@ -4,7 +4,10 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.http import HttpResponse
 from .models import Person, Family
+from .models import Person, Family
 from .forms import PersonForm
+from management.models import CommitteeMember
+from management.forms import AddToCommitteeForm
 import pandas as pd
 from io import BytesIO
 
@@ -30,12 +33,18 @@ def directory(request):
         
     # Sorting: Hometown (alphabetical) then Full Name
     people = people.order_by('family__hometown', 'full_name')
+
+    # Committee info
+    committee_full = CommitteeMember.is_committee_full()
+    available_slots = CommitteeMember.get_available_slots()
         
     return render(request, 'people/directory_list.html', {
         'people': people,
         'is_admin': is_admin_or_subadmin(request.user),
         'query': query,
-        'hometown': hometown
+        'hometown': hometown,
+        'committee_full': committee_full,
+        'available_slots': available_slots
     })
 
 @login_required
@@ -185,3 +194,46 @@ def download_directory(request):
     )
     response['Content-Disposition'] = 'attachment; filename="People_Directory.xlsx"'
     return response
+
+@login_required
+def add_to_committee(request, person_pk):
+    if not is_admin_or_subadmin(request.user):
+        messages.error(request, "Permission denied.")
+        return redirect('people_directory')
+        
+    person = get_object_or_404(Person, pk=person_pk)
+    
+    # Check if already in committee
+    if CommitteeMember.objects.filter(person=person).exists():
+        messages.warning(request, f"{person.full_name} is already in the committee.")
+        return redirect('people_directory')
+        
+    # Check if committee is full
+    if CommitteeMember.is_committee_full():
+        messages.error(request, "The committee is full (47 members). You must remove a member before adding a new one.")
+        return redirect('people_directory')
+        
+    if request.method == 'POST':
+        form = AddToCommitteeForm(request.POST, person=person)
+        if form.is_valid():
+            committee_member = form.save()
+            
+            # Audit Log
+            from accounts.models import AuditLog
+            AuditLog.objects.create(
+                actor=request.user, 
+                action="Promoted to Committee", 
+                target=person.full_name,
+                details=f"Added {person.full_name} as {committee_member.get_designation_display()}"
+            )
+            
+            messages.success(request, f"{person.full_name} added to the committee successfully!")
+            return redirect('people_directory')
+    else:
+        form = AddToCommitteeForm(person=person)
+        
+    return render(request, 'people/add_to_committee.html', {
+        'form': form,
+        'person': person,
+        'available_slots': CommitteeMember.get_available_slots()
+    })

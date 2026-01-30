@@ -1,0 +1,44 @@
+{% extends 'base/base.html' %}
+
+{% block title %}{{ title }} | Kantha27{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1><i class="fas fa-edit"></i> {{ title }}</h1>
+</div>
+
+<div style="max-width: 600px; margin: 0 auto;">
+    <div class="glass-card" style="padding: 2rem;">
+        <form method="post">
+            {% csrf_token %}
+
+            <div class="form-field-wrapper">
+                <label class="form-label">Announcement Message</label>
+                {{ form.message }}
+                {% if form.message.errors %}
+                <div class="form-error">{{ form.message.errors }}</div>
+                {% endif %}
+            </div>
+
+            <div class="form-field-wrapper" style="display: flex; align-items: center; gap: 10px;">
+                <label class="form-label" style="margin: 0;">Active:</label>
+                {{ form.is_active }}
+            </div>
+
+            <div class="form-field-wrapper">
+                <label class="form-label">Scroll Speed (Seconds)</label>
+                {{ form.scroll_speed }}
+                <small style="color: #666; display: block; margin-top: 5px;">{{ form.scroll_speed.help_text }}</small>
+                {% if form.scroll_speed.errors %}
+                <div class="form-error">{{ form.scroll_speed.errors }}</div>
+                {% endif %}
+            </div>
+
+            <div style="margin-top: 2rem; display: flex; gap: 1rem;">
+                <button type="submit" class="btn-primary" style="flex: 1;">Save Announcement</button>
+                <a href="{% url 'news_list' %}" class="btn-secondary" style="flex: 1; text-align: center;">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

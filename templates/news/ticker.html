@@ -1,0 +1,34 @@
+{% load static %}
+{% if announcements %}
+<div class="news-ticker-container">
+    <div class="ticker-label">
+        <img src="{% static 'img/ticker_logo.png' %}" alt="News" style="height: 30px; margin-right: 8px;">
+        Announcements
+    </div>
+    <div class="ticker-wrap">
+        <div class="ticker-move" style="animation-duration: {{ speed }}s;">
+            <div class="ticker-group">
+                {% for item in announcements %}
+                <div class="ticker-item">
+                    <img src="{% static 'img/ticker_logo.png' %}" alt="Icon"
+                        style="height: 18px; vertical-align: middle; margin-right: 5px; opacity: 0.8;">
+                    {{ item.message }}
+                </div>
+                {% endfor %}
+            </div>
+            <!-- Duplicated group for seamless gapless loop -->
+            <div class="ticker-group">
+                {% for item in announcements %}
+                <div class="ticker-item">
+                    <img src="{% static 'img/ticker_logo.png' %}" alt="Icon"
+                        style="height: 18px; vertical-align: middle; margin-right: 5px; opacity: 0.8;">
+                    {{ item.message }}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    <button class="ticker-close"
+        onclick="document.querySelector('.news-ticker-container').style.display='none';">&times;</button>
+</div>
+{% endif %}

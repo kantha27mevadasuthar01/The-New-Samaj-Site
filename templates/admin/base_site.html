@@ -11,6 +11,12 @@
         {{ site_header|default:_('Django administration') }}
     </a>
 </h1>
+<div style="float: right;">
+    <button id="theme-toggle" class="admin-theme-toggle" title="Toggle Theme">
+        TOGGLE THEME
+    </button>
+</div>
+<script src="{% static 'js/theme_toggle.js' %}"></script>
 {% endblock %}
 
 {% block extrastyle %}
