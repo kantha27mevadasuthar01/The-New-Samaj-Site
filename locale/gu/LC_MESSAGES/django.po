@@ -13,7 +13,7 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 msgid "Home"
-msgstr "હોમ"
+msgstr "મુખ્ય પૃષ્ઠ"
 
 msgid "Our Team"
 msgstr "અમારી ટીમ"
@@ -22,13 +22,13 @@ msgid "Gallery"
 msgstr "ગેલેરી"
 
 msgid "Locations"
-msgstr "સ્થળો"
+msgstr "સ્થાનો"
 
 msgid "Explore"
 msgstr "વધુ જુઓ"
 
 msgid "People Directory"
-msgstr "લોકોની ડાયરેક્ટરી"
+msgstr "વસ્તી ગણતરી"
 
 msgid "Admin Portal"
 msgstr "એડમિન પોર્ટલ"
@@ -37,7 +37,7 @@ msgid "Logout"
 msgstr "લોગ આઉટ"
 
 msgid "Login"
-msgstr "લોગિન"
+msgstr "લોગ ઇન"
 
 msgid "Join Now"
 msgstr "જોડાઓ"
@@ -93,39 +93,14 @@ msgstr "અંગ્રેજી"
 msgid "Gujarati"
 msgstr "ગુજરાતી"
 
-msgid "Home"
-msgstr "મુખ્ય પૃષ્ઠ"
-
-msgid "Our Team"
-msgstr "અમારી ટીમ"
-
-msgid "Gallery"
-msgstr "ગેલેરી"
-
-msgid "Locations"
-msgstr "સ્થાનો"
-
-msgid "People Directory"
-msgstr "વસ્તી ગણતરી"
-
-msgid "Admin Portal"
-msgstr "એડમિન પોર્ટલ"
-
 msgid "Language"
 msgstr "ભાષા"
 
 msgid "Donate Now"
 msgstr "દાન કરો"
 
-msgid "Logout"
-msgstr "લોગ આઉટ"
-
-msgid "Login"
-msgstr "લોગ ઇન"
-
 msgid "Join Community"
 msgstr "સમાજમાં જોડાઓ"
 
 msgid "Main Menu"
 msgstr "મુખ્ય મેનુ"
-
