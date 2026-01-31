@@ -582,7 +582,16 @@ button:hover .far,
     /* Hidden by default */
     transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     overflow-y: auto;
+    /* Hide scrollbar for clean look */
+    -ms-overflow-style: none;
+    /* IE and Edge */
+    scrollbar-width: none;
+    /* Firefox */
     box-shadow: 10px 0 30px rgba(0, 0, 0, 0.1);
+}
+
+.app-sidebar::-webkit-scrollbar {
+    display: none;
     /* Add shadow to see edge */
 }
 
