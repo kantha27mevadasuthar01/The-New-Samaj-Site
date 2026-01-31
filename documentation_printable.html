@@ -1,0 +1,341 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project Documentation</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/5.2.0/github-markdown.min.css">
+    <style>
+        body {
+            box-sizing: border-box;
+            min-width: 200px;
+            max-width: 980px;
+            margin: 0 auto;
+            padding: 45px;
+        }
+        @media (max-width: 767px) {
+            body {
+                padding: 15px;
+            }
+        }
+        .markdown-body {
+            background-color: white; /* Ensure white bg for printing */
+        }
+        /* Print optimizations */
+        @media print {
+            body {
+                max-width: 100%;
+                padding: 0;
+            }
+        }
+    </style>
+</head>
+<body class="markdown-body">
+    <h1>Shree Kantha 27 Mevada Suthar Samaj - Project Documentation</h1>
+<h2>1. Project Overview</h2>
+<p>This project is a comprehensive community management web application designed for the "Shree Kantha 27 Mevada Suthar Samaj". It serves as a digital platform to connect community members, manage family records, organize committees, and share news and events.</p>
+<p><strong>Key Goals:</strong>
+- Digitize the community directory (People &amp; Families).
+- Manage the Executive Committee structure efficiently.
+- Provide a platform for news, announcements, and events.
+- Facilitate transparency with features like donations and gallery.</p>
+<hr />
+<h2>2. Technical Stack</h2>
+<ul>
+<li><strong>Backend Framework:</strong> Django 6.1+ (Python)</li>
+<li><strong>Database:</strong> SQLite (Development) / MySQL or PostgreSQL (Production recommended)</li>
+<li><strong>Frontend:</strong> HTML5, CSS3 (Custom "Orange Theme" with Glassmorphism), JavaScript (Vanilla)</li>
+<li><strong>Deployment Platform:</strong> PythonAnywhere</li>
+<li><strong>Version Control:</strong> Git &amp; GitHub</li>
+</ul>
+<hr />
+<h2>3. Project Architecture &amp; Apps</h2>
+<p>The project is modularized into several Django apps, each handling a specific domain of functionality.</p>
+<h3>3.1. <code>people</code> (Core Directory)</h3>
+<p>The heart of the application. It manages the community database.
+- <strong>Models:</strong>
+    - <code>Person</code>: Individual records (Name, Education, Job, Marital Status, Relations, etc.).
+    - <code>Family</code>: Grouping of people by Hometown and Head of Family.
+- <strong>Key Views:</strong> Directory List (filtering by name/city), Person Detail, Admin CRUD (Create/Read/Update/Delete) operations.
+- <strong>Features:</strong>
+    - Export Directory to Excel.
+    - Automatic "Head of Family" logic management.
+    - Search and Filter capabilities.</p>
+<h3>3.2. <code>management</code> (Committee &amp; Governance)</h3>
+<p>Manages the governing body of the Samaj.
+- <strong>Models:</strong>
+    - <code>CommitteeMember</code>: Represents an elected member with a specific designation (e.g., Pramukh, Mantri). Enforces limits on positions (e.g., only 1 Pramukh).
+    - <code>CommitteeSettings</code>: Configures the active term (Start Year - End Year).
+- <strong>Features:</strong>
+    - Visual Committee List.
+    - Automatic validation of role limits (e.g., max 27 Karobari Sabhy).
+    - "Add to Committee" flow directly from the People Directory.</p>
+<h3>3.3. <code>news</code> (Announcements)</h3>
+<p>Handles the breaking news ticker and updates.
+- <strong>Models:</strong>
+    - <code>NewsAnnouncement</code>: Stores the message, active status, and scroll speed.
+- <strong>Features:</strong>
+    - Dynamic scrolling ticker on the frontend.
+    - Admin interface to adding/toggling announcements.</p>
+<h3>3.4. <code>accounts</code> (Authentication &amp; Security)</h3>
+<p>Manages user access and security.
+- <strong>Models:</strong>
+    - <code>User</code>: Custom user model (extending AbstractUser) with roles (<code>ADMIN</code>, <code>SUB_ADMIN</code>, <code>MEMBER</code>).
+    - <code>AuditLog</code>: Tracks critical actions (Who did what and when) for security and accountability.
+- <strong>Features:</strong>
+    - Role-Based Access Control (RBAC).
+    - Custom Login/Logout views.
+    - Password management.</p>
+<h3>3.5. <code>dashboard</code> (Admin Panel)</h3>
+<p>A custom dashboard for administrators to get a high-level view.
+- <strong>Features:</strong>
+    - Statistics widgets (Total Members, Families, Committee Status).
+    - Quick links to common actions (Add Person, Add News).
+    - Visual charts (Demographics).</p>
+<h3>3.6. <code>gallery</code> (Media)</h3>
+<p>Showcases community events and photos.
+- <strong>Models:</strong> <code>MediaItem</code> (Titles, Images/Videos, Descriptions).</p>
+<h3>3.7. <code>locations</code> (Community Assets)</h3>
+<p>Lists important community locations (e.g., Samaj Wadi, Temples).
+- <strong>Models:</strong> <code>Location</code> (Name, Address, Map Link, Contact).</p>
+<h3>3.8. <code>donations</code> (Transperancy)</h3>
+<p>Tracks and displays donations made to the community.
+- <strong>Models:</strong> <code>Donation</code> (Donor Name, Amount, Date, Purpose).</p>
+<hr />
+<h2>4. User Roles &amp; Permissions</h2>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Role</th>
+<th style="text-align: left;">Access Level</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Admin</strong></td>
+<td style="text-align: left;">Full Access</td>
+<td style="text-align: left;">Can manage all data, users, and settings. Access to Audit Logs and User Management.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Sub-Admin</strong></td>
+<td style="text-align: left;">High Access</td>
+<td style="text-align: left;">Can manage Directory, News, and Gallery. Restricted from changing critical system settings or deleting other Admins.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Member</strong></td>
+<td style="text-align: left;">Read-Only</td>
+<td style="text-align: left;">Can view the Directory (if authorized), Gallery, News, and Committee lists.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Public</strong></td>
+<td style="text-align: left;">Limited</td>
+<td style="text-align: left;">Can view "Home", "Our Team", "Gallery", "News". Cannot see sensitive Directory data (Phone numbers, etc.).</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>5. Deployment Details (PythonAnywhere)</h2>
+<p>The live site is hosted on PythonAnywhere.</p>
+<ul>
+<li><strong>Domain:</strong> <code>shreekantha27mevadasuthar.pythonanywhere.com</code></li>
+<li><strong>Virtual Environment:</strong> <code>/home/ShreeKantha27MevadaSuthar/.virtualenvs/myvenv</code></li>
+<li><strong>Static Files:</strong> Collected to specific static root for production serving.</li>
+<li><strong>WSGI Configuration:</strong> Configured to serve the Django application via WSGI.</li>
+</ul>
+<h3>Critical Deployment Commands</h3>
+<ol>
+<li><strong>Update Code:</strong> <code>git pull</code></li>
+<li><strong>Install Req:</strong> <code>pip install -r requirements.txt</code> (inside virtualenv)</li>
+<li><strong>Database:</strong> <code>python manage.py migrate</code></li>
+<li><strong>Static Files:</strong> <code>python manage.py collectstatic</code></li>
+<li><strong>Translations:</strong> <code>python manage.py compilemessages</code></li>
+</ol>
+<hr />
+<h2>6. Directory Structure</h2>
+<pre><code>Kantha27MevadaSutha/
+├── kantha_project/      # Main Project Configuration (settings.py, urls.py)
+├── people/              # People &amp; Family Directory App
+├── management/          # Committee Management App
+├── news/                # News Ticker App
+├── accounts/            # User Auth &amp; Audit Logs
+├── dashboard/           # Admin Dashboard Logic
+├── gallery/             # Photo/Video Gallery
+├── locations/           # Map &amp; Location Listings
+├── templates/           # HTML Templates (organized by app)
+├── static/              # CSS, JS, Images
+├── locale/              # Translation Files (Gujarati/English)
+├── media/               # User-uploaded content (Photos)
+├── manage.py            # Django Management utility
+└── requirements.txt     # Python Dependencies
+</code></pre>
+<hr />
+<h2>7. Dependencies &amp; Assets</h2>
+<h3>7.1. Python Libraries (Backend)</h3>
+<p>These libraries are installed via <code>requirements.txt</code>:
+- <strong><code>Django</code></strong>: The core web framework.
+- <strong><code>pandas</code> &amp; <code>openpyxl</code></strong>: Used for generating and exporting the "People Directory" to Excel.
+- <strong><code>Pillow</code></strong>: Image processing library for handling user-uploaded photos (Member profiles).
+- <strong><code>django-crispy-forms</code> &amp; <code>crispy-bootstrap5</code></strong>: Renders Django forms utilizing Bootstrap 5 styles for a cleaner UI.
+- <strong><code>sqlparse</code></strong>: Helper for SQL formating (Django dependency).</p>
+<h3>7.2. Frontend Libraries (CSS/JS)</h3>
+<ul>
+<li><strong>CSS Framework</strong>: <strong>Custom "Orange Theme"</strong> (<code>orange_theme.css</code>).<ul>
+<li><em>Design Style:</em> <strong>Glassmorphism</strong> (Translucent cards, blur effects, vivid orange gradients).</li>
+<li><em>Features:</em> Responsive grid, Flexbox navigation, dark mode toggle support.</li>
+</ul>
+</li>
+<li><strong>Fonts</strong>: <a href="https://fonts.google.com/specimen/Outfit">Outfit</a> (Google Fonts) - Modern, geometric sans-serif.</li>
+<li><strong>Icons</strong>: <a href="https://fontawesome.com/">FontAwesome 6.4.0</a> (CDN) - Used for navigation icons, action buttons, and social links.</li>
+</ul>
+<h3>7.3. Graphics &amp; Media</h3>
+<p>Located in <code>static/img/</code>:
+- <strong><code>logo.png</code></strong>: Main community logo (Header/Navbar).
+- <strong><code>ticker_logo.png</code></strong>: Specialized variant for the news ticker.
+- <strong><code>default_profile.png</code></strong>: Placeholder image for members who haven't uploaded a photo.</p>
+<h3>7.4. Other Important Components</h3>
+<ul>
+<li><strong>News Ticker</strong>: Custom CSS/JS implementation (no external plugin). Uses CSS <code>@keyframes</code> for smooth scrolling.</li>
+<li><strong>Language Support</strong>: Django Internationalization (i18n) for English/Gujarati switching.</li>
+</ul>
+<hr />
+<h2>8. Visual Architecture (Presentation Charts)</h2>
+<h3>8.1. High-Level System Overview (Whole Project)</h3>
+<p>A bird's-eye view of the entire technical ecosystem.</p>
+<div class="mermaid">%%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#ffffff', 'edgeLabelBackground':'#ffffff', 'tertiaryColor': '#ffffff', 'lineColor': '#000000', 'textColor': '#000000'}}}%%
+graph LR
+    classDef client fill:#e3f2fd,stroke:#1565c0,stroke-width:2px;
+    classDef server fill:#fff3e0,stroke:#e65100,stroke-width:2px;
+    classDef db fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px;
+
+    Browser[User Browser / Mobile]:::client <-->|HTTPS / JSON| Server[PythonAnywhere Cloud]:::server
+
+    subgraph Backend Layer
+    Server -->|Runs| Django[Django Framework]
+    Django -->|Manages| Auth[Authentication]
+    Django -->|Serves| Static[Static Files]
+    end
+
+    subgraph Data Layer
+    Django <-->|Read/Write| SQLite[(SQLite Database)]:::db
+    Django -->|Stores| Media[Media Files / Photos]:::db
+    end
+</div>
+
+<h3>8.2. System Workflow</h3>
+<p>This flowchart demonstrates how different users interact with the system.</p>
+<div class="mermaid">%%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#ffffff', 'edgeLabelBackground':'#ffffff', 'tertiaryColor': '#ffffff', 'lineColor': '#000000', 'textColor': '#000000'}}}%%
+graph TD
+    classDef plain fill:#fff,stroke:#333,stroke-width:1px;
+    classDef success fill:#e8f5e9,stroke:#2e7d32,stroke-width:2px;
+    classDef accent fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px;
+
+    User[Visitor/User] -->|Landing Page| Home[Home Page]
+    Home:::plain -->|View| Gallery:::plain
+    Home -->|View| News:::plain
+    Home -->|View| Committee:::plain
+
+    User -->|Login| Auth{Authentication}
+    Auth:::plain -->|Success| Dashboard:::success
+
+    Dashboard -->|Role: Admin| AdminPanel[Admin Panel]
+    AdminPanel:::accent -->|Manage| People[People Directory]
+    AdminPanel -->|Manage| Users[User Accounts]
+
+    Dashboard -->|Role: Member| MemberView[Member Area]
+    MemberView:::plain -->|View Only| People
+
+    subgraph Core Features
+    People:::plain <-->|Linked to| Family[Family Units]
+    People -.->|Promoted to| Committee[Executive Committee]
+    end
+</div>
+
+<h3>8.2. User Role Distribution (Pie Chart)</h3>
+<p>Visual representation of the user hierarchy.</p>
+<div class="mermaid">%%{init: {'theme': 'base', 'themeVariables': { 'pie1': '#ffffff', 'pie2': '#f0f0f0', 'pie3': '#d0d0d0', 'pieStrokeColor': '#000000', 'pieStrokeWidth': '2px', 'pieOpacity': '1'}}}%%
+pie title Access Level Distribution
+    "Member (Read-Only)" : 85
+    "Sub-Admin (Managers)" : 10
+    "Super Admin (Control)" : 5
+</div>
+
+<h3>8.3. Database Schema (Simplified)</h3>
+<p>An entity-relationship diagram showing the core data structure.</p>
+<div class="mermaid">%%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#ffffff', 'lineColor': '#000000', 'textColor': '#000000'}}}%%
+erDiagram
+    FAMILY ||--|{ PERSON : "contains"
+    PERSON ||--o| COMMITTEE_MEMBER : "can be"
+    PERSON ||--o| USER : "linked to"
+
+    FAMILY {
+        string hometown
+        string head_of_family
+    }
+
+    PERSON {
+        string full_name
+        string education
+        string job
+        image photo
+    }
+
+    COMMITTEE_MEMBER {
+        string designation
+        int display_order
+    }
+</div>
+
+<hr />
+<h2>9. Future Roadmap</h2>
+<p>Strategic goals for the next phase of development.</p>
+<ol>
+<li><strong>Mobile App Integration</strong>: Build a dedicated Flutter/React Native wrapper for push notifications.</li>
+<li><strong>Payment Gateway</strong>: Automate donations and maintenance fee collection via UPI/Razorpay.</li>
+<li><strong>Matrimonial Section</strong>: A discrete, secure section for finding matches within the community.</li>
+</ol>
+<hr />
+<h2>10. Mobile Responsiveness &amp; UX</h2>
+<p>The application is fully responsive, optimized for seamless usage on smartphones and tablets.</p>
+<h3>10.1. Breakpoint Implementation</h3>
+<p>The primary breakpoint is set at <strong><code>max-width: 768px</code></strong> (Tablet/Mobile Portait).
+- <strong>CSS Logic</strong>: <code>@media (max-width: 768px)</code> in <code>orange_theme.css</code>.</p>
+<h3>10.2. Key Mobile Features</h3>
+<ol>
+<li>
+<p><strong>Adaptive Navigation</strong>:</p>
+<ul>
+<li><strong>Desktop</strong>: Horizontal Navbar with dropdowns.</li>
+<li><strong>Mobile</strong>: The top navbar simplifies, and the <strong>Sidebar</strong> becomes a <strong>Slide-out Drawer</strong>.<ul>
+<li><em>Mechanism</em>: A "Hamburger Menu" (<code>.hamburger</code>) appears. clicking it toggles the <code>.active</code> class on the <code>.app-sidebar</code>, sliding it in from the left (<code>transform: translateX(0)</code>).</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>Optimized Layouts</strong>:</p>
+<ul>
+<li><strong>Grids</strong>: The <code>auto-fit</code> CSS Grid logic (used in Management and Dashboard modules) automatically stacks cards vertically (1 column) on small screens instead of squeezing them horizontally.</li>
+<li><strong>Touch Targets</strong>: Buttons and links have increased padding (<code>1.5rem</code>) to ensure they are easily tap-able.</li>
+</ul>
+</li>
+<li>
+<p><strong>Typography</strong>: Base font size adjusts to <strong>15px</strong> for better readability on small screens.</p>
+</li>
+<li>
+<p><strong>Performance</strong>:</p>
+<ul>
+<li>The <strong>News Ticker</strong> is sticky at the bottom (<code>position: fixed; bottom: 0;</code>) on mobile for easy visibility without obstructing content.</li>
+<li><strong>Sidebar Scrollbar</strong>: The visual scrollbar is hidden (<code>scrollbar-width: none</code>) to maximize screen real estate while retaining scrolling functionality.</li>
+</ul>
+</li>
+</ol>
+
+    <!-- Mermaid JS -->
+    <script type="module">
+        import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+        mermaid.initialize({ startOnLoad: true });
+    </script>
+</body>
+</html>

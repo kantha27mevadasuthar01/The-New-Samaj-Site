@@ -12,7 +12,7 @@ This project is a comprehensive community management web application designed fo
 ---
 
 ## 2. Technical Stack
-- **Backend Framework:** Django 5.0+ (Python)
+- **Backend Framework:** Django 6.1+ (Python)
 - **Database:** SQLite (Development) / MySQL or PostgreSQL (Production recommended)
 - **Frontend:** HTML5, CSS3 (Custom "Orange Theme" with Glassmorphism), JavaScript (Vanilla)
 - **Deployment Platform:** PythonAnywhere
@@ -163,36 +163,77 @@ Located in `static/img/`:
 
 ## 8. Visual Architecture (Presentation Charts)
 
-### 8.1. System Workflow
+### 8.1. High-Level System Overview (Whole Project)
+A bird's-eye view of the entire technical ecosystem.
+
+```mermaid
+%%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#ffffff', 'edgeLabelBackground':'#ffffff', 'tertiaryColor': '#ffffff', 'lineColor': '#000000', 'textColor': '#000000'}}}%%
+graph LR
+    classDef client fill:#e3f2fd,stroke:#1565c0,stroke-width:2px;
+    classDef server fill:#fff3e0,stroke:#e65100,stroke-width:2px;
+    classDef db fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px;
+
+    Browser[User Browser / Mobile]:::client <-->|HTTPS / JSON| Server[PythonAnywhere Cloud]:::server
+    
+    subgraph Backend Layer
+    Server -->|Runs| Django[Django Framework]
+    Django -->|Manages| Auth[Authentication]
+    Django -->|Serves| Static[Static Files]
+    end
+    
+    subgraph Data Layer
+    Django <-->|Read/Write| SQLite[(SQLite Database)]:::db
+    Django -->|Stores| Media[Media Files / Photos]:::db
+    end
+```
+
+### 8.2. System Workflow
 This flowchart demonstrates how different users interact with the system.
 
 ```mermaid
+%%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#ffffff', 'edgeLabelBackground':'#ffffff', 'tertiaryColor': '#ffffff', 'lineColor': '#000000', 'textColor': '#000000'}}}%%
 graph TD
+    classDef plain fill:#fff,stroke:#333,stroke-width:1px;
+    classDef success fill:#e8f5e9,stroke:#2e7d32,stroke-width:2px;
+    classDef accent fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px;
+
     User[Visitor/User] -->|Landing Page| Home[Home Page]
-    Home -->|View| Gallery
-    Home -->|View| News
-    Home -->|View| Committee
+    Home:::plain -->|View| Gallery:::plain
+    Home -->|View| News:::plain
+    Home -->|View| Committee:::plain
     
     User -->|Login| Auth{Authentication}
-    Auth -->|Success| Dashboard
+    Auth:::plain -->|Success| Dashboard:::success
     
     Dashboard -->|Role: Admin| AdminPanel[Admin Panel]
-    AdminPanel -->|Manage| People[People Directory]
+    AdminPanel:::accent -->|Manage| People[People Directory]
     AdminPanel -->|Manage| Users[User Accounts]
     
     Dashboard -->|Role: Member| MemberView[Member Area]
-    MemberView -->|View Only| People
+    MemberView:::plain -->|View Only| People
     
     subgraph Core Features
-    People <-->|Linked to| Family[Family Units]
+    People:::plain <-->|Linked to| Family[Family Units]
     People -.->|Promoted to| Committee[Executive Committee]
     end
 ```
 
-### 8.2. Database Schema (Simplified)
+### 8.2. User Role Distribution (Pie Chart)
+Visual representation of the user hierarchy.
+
+```mermaid
+%%{init: {'theme': 'base', 'themeVariables': { 'pie1': '#ffffff', 'pie2': '#f0f0f0', 'pie3': '#d0d0d0', 'pieStrokeColor': '#000000', 'pieStrokeWidth': '2px', 'pieOpacity': '1'}}}%%
+pie title Access Level Distribution
+    "Member (Read-Only)" : 85
+    "Sub-Admin (Managers)" : 10
+    "Super Admin (Control)" : 5
+```
+
+### 8.3. Database Schema (Simplified)
 An entity-relationship diagram showing the core data structure.
 
 ```mermaid
+%%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#ffffff', 'lineColor': '#000000', 'textColor': '#000000'}}}%%
 erDiagram
     FAMILY ||--|{ PERSON : "contains"
     PERSON ||--o| COMMITTEE_MEMBER : "can be"
@@ -224,4 +265,28 @@ Strategic goals for the next phase of development.
 1.  **Mobile App Integration**: Build a dedicated Flutter/React Native wrapper for push notifications.
 2.  **Payment Gateway**: Automate donations and maintenance fee collection via UPI/Razorpay.
 3.  **Matrimonial Section**: A discrete, secure section for finding matches within the community.
-4.  **SMS Integration**: Auto-send SMS alerts for urgent news or event reminders.
+
+---
+
+## 10. Mobile Responsiveness & UX
+The application is fully responsive, optimized for seamless usage on smartphones and tablets.
+
+### 10.1. Breakpoint Implementation
+The primary breakpoint is set at **`max-width: 768px`** (Tablet/Mobile Portait).
+- **CSS Logic**: `@media (max-width: 768px)` in `orange_theme.css`.
+
+### 10.2. Key Mobile Features
+1.  **Adaptive Navigation**:
+    - **Desktop**: Horizontal Navbar with dropdowns.
+    - **Mobile**: The top navbar simplifies, and the **Sidebar** becomes a **Slide-out Drawer**.
+        - *Mechanism*: A "Hamburger Menu" (`.hamburger`) appears. clicking it toggles the `.active` class on the `.app-sidebar`, sliding it in from the left (`transform: translateX(0)`).
+
+2.  **Optimized Layouts**:
+    - **Grids**: The `auto-fit` CSS Grid logic (used in Management and Dashboard modules) automatically stacks cards vertically (1 column) on small screens instead of squeezing them horizontally.
+    - **Touch Targets**: Buttons and links have increased padding (`1.5rem`) to ensure they are easily tap-able.
+
+3.  **Typography**: Base font size adjusts to **15px** for better readability on small screens.
+
+4.  **Performance**:
+    - The **News Ticker** is sticky at the bottom (`position: fixed; bottom: 0;`) on mobile for easy visibility without obstructing content.
+    - **Sidebar Scrollbar**: The visual scrollbar is hidden (`scrollbar-width: none`) to maximize screen real estate while retaining scrolling functionality.

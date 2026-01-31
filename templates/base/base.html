@@ -31,7 +31,7 @@
             <img src="{% static 'img/logo.png' %}" alt="Logo" class="nav-logo">
             <div style="display: flex; flex-direction: column; line-height: 1.1;">
                 <span style="font-size: 1.2rem; font-weight: 800;">Shree Kantha 27 Mevada Suthar Samaj</span>
-                <span style="font-size: 0.8rem; font-weight: 400; opacity: 0.9;">& Shree 27 Mevada Suthar Sarvjanik
+                <span style="font-size: 1.2rem; font-weight: 800;">& Shree 27 Mevada Suthar Sarvjanik
                     Vishavkarma Mandir Trust</span>
             </div>
         </a>
@@ -66,6 +66,21 @@
                 </div>
 
                 <nav class="sidebar-nav">
+                    <a href="{% url 'home' %}" class="sidebar-item">
+                        <i class="fas fa-home"></i> <span>{% trans "Home" %}</span>
+                    </a>
+                    <a href="{% url 'committee_list' %}" class="sidebar-item">
+                        <i class="fas fa-users-cog"></i> <span>{% trans "Our Team" %}</span>
+                    </a>
+                    <a href="{% url 'media_list' %}" class="sidebar-item">
+                        <i class="fas fa-images"></i> <span>{% trans "Gallery" %}</span>
+                    </a>
+                    <a href="{% url 'location_list' %}" class="sidebar-item">
+                        <i class="fas fa-map-marker-alt"></i> <span>{% trans "Locations" %}</span>
+                    </a>
+
+                    <div class="sidebar-divider"></div>
+
                     {% if user.is_authenticated and user.can_view_directory or user.is_staff %}
                     <a href="{% url 'people_directory' %}" class="sidebar-item">
                         <i class="fas fa-users"></i> <span>{% trans "People Directory" %}</span>
@@ -77,29 +92,6 @@
                         <i class="fas fa-user-shield"></i> <span>{% trans "Admin Portal" %}</span>
                     </a>
                     {% endif %}
-
-                    <div class="sidebar-divider"></div>
-
-                    <div class="sidebar-header">
-                        <i class="fas fa-globe"></i> {% trans "Language" %}
-                    </div>
-
-                    <div class="sidebar-lang">
-                        <form action="{% url 'set_language' %}" method="post" class="lang-form">
-                            {% csrf_token %}
-                            <input name="next" type="hidden" value="{{ request.get_full_path }}">
-                            <input name="language" type="hidden" value="en">
-                            <button type="submit"
-                                class="lang-btn {% if request.LANGUAGE_CODE == 'en' %}active{% endif %}">EN</button>
-                        </form>
-                        <form action="{% url 'set_language' %}" method="post" class="lang-form">
-                            {% csrf_token %}
-                            <input name="next" type="hidden" value="{{ request.get_full_path }}">
-                            <input name="language" type="hidden" value="gu">
-                            <button type="submit"
-                                class="lang-btn {% if request.LANGUAGE_CODE == 'gu' %}active{% endif %}">GU</button>
-                        </form>
-                    </div>
 
                     <div class="sidebar-divider"></div>
 

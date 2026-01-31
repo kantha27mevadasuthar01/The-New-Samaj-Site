@@ -741,8 +741,13 @@ button:hover .far,
 /* Mobile Responsiveness */
 @media (max-width: 768px) {
     body {
-        font-size: 15px;
+        font-size: 14px; /* Reduced by 1px */
     }
+
+    h1 { font-size: 1.8rem !important; }
+    h2 { font-size: 1.5rem !important; }
+    h3 { font-size: 1.3rem !important; }
+    h4 { font-size: 1.1rem !important; }
 
     .navbar {
         height: 60px;
@@ -750,11 +755,25 @@ button:hover .far,
     }
 
     .nav-brand {
-        font-size: 1.1rem;
+        font-size: 1rem;
+        max-width: 70%; /* Prevent overlap with hamburger */
+        line-height: 1.2;
     }
 
+    .nav-brand div {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .nav-brand span {
+        font-size: 0.9rem !important;
+        white-space: normal; /* Allow text wrapping */
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    
     .nav-brand img {
-        height: 40px !important;
+        height: 35px !important;
         margin-right: 8px !important;
     }
 
@@ -788,24 +807,7 @@ button:hover .far,
     }
 
     .nav-links {
-        display: flex;
-        flex-direction: row;
-        position: static;
-        background: transparent;
-        box-shadow: none;
-        padding: 0;
-        clip-path: none;
-        gap: 1rem;
-    }
-
-    .nav-links li:not(:first-child) {
-        display: none;
-        /* Hide top-level links except Home/Logo on tiny screens or keep them? */
-    }
-
-    /* Keep primary links visible if there's space */
-    .nav-links {
-        display: flex !important;
+        display: none; /* Hide top nav links on mobile completely, rely on sidebar */
     }
 
     .dashboard-container {
@@ -813,17 +815,42 @@ button:hover .far,
         gap: 1rem;
     }
 
+    /* Fix Management Grid for Mobile */
+    .management-grid {
+        grid-template-columns: 1fr; /* Stack vertically on mobile */
+        gap: 1rem;
+    }
+
     .sidebar {
         width: 100%;
         order: -1;
+        display: none; /* Often on mobile dashboard sidebars are hidden or moved */
+    }
+    
+    /* If we want to keep the sidebar content accessible but styled differently: */
+    /*
+    .sidebar {
+        width: 100%;
+        order: -1;
+    }
+    .sidebar .glass-card { ... }
+    */
+    /* For now, let's assume the main app-sidebar handles navigation, causing the local sidebar to be redundant or need hiding if it creates clutter. 
+       However, based on previous code, there was a specific mobile style for .sidebar. Let's keep a cleaner version of it.
+    */
+     .sidebar {
+        width: 100%;
+        order: -1;
+        margin-bottom: 1rem;
     }
 
     .sidebar .glass-card {
         padding: 1rem;
         display: flex;
-        overflow-x: auto;
-        gap: 1rem;
+        overflow-x: auto; /* Horizontal scroll for sub-menu items */
+        gap: 0.5rem;
         align-items: center;
+        white-space: nowrap;
     }
 
     .sidebar h3 {
@@ -833,7 +860,6 @@ button:hover .far,
     .sidebar-menu {
         display: flex;
         gap: 0.5rem;
-        white-space: nowrap;
     }
 
     .sidebar-menu li {
@@ -842,8 +868,9 @@ button:hover .far,
 
     .sidebar-menu a {
         padding: 0.5rem 0.8rem;
-        font-size: 0.9rem;
+        font-size: 0.85rem;
         background: rgba(0, 0, 0, 0.05);
+        border: 1px solid rgba(0,0,0,0.1);
     }
 
     .main-content {
@@ -851,7 +878,7 @@ button:hover .far,
     }
 
     .glass-card {
-        padding: 1.5rem;
+        padding: 1.25rem;
     }
 
     footer {
@@ -863,7 +890,7 @@ button:hover .far,
         width: 90%;
         left: 5%;
         right: 5%;
-        top: 80px !important;
+        top: 70px !important;
     }
 }
 
