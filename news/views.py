@@ -5,17 +5,27 @@ from .models import NewsAnnouncement
 from .forms import NewsAnnouncementForm
 
 def is_staff_check(user):
+    """
+    Check if the user is staff or an Admin/Sub-Admin.
+    """
     return user.is_staff or user.role in ['ADMIN', 'SUB_ADMIN']
 
 @login_required
 @user_passes_test(is_staff_check)
 def news_list(request):
+    """
+    Displays a list of all news announcements.
+    Restricted to Staff/Admins.
+    """
     news_items = NewsAnnouncement.objects.all().order_by('-created_at')
     return render(request, 'news/news_list.html', {'news_items': news_items})
 
 @login_required
 @user_passes_test(is_staff_check)
 def news_create(request):
+    """
+    Creates a new news announcement.
+    """
     if request.method == 'POST':
         form = NewsAnnouncementForm(request.POST)
         if form.is_valid():
@@ -29,6 +39,9 @@ def news_create(request):
 @login_required
 @user_passes_test(is_staff_check)
 def news_edit(request, pk):
+    """
+    Edits an existing news announcement.
+    """
     news_item = get_object_or_404(NewsAnnouncement, pk=pk)
     if request.method == 'POST':
         form = NewsAnnouncementForm(request.POST, instance=news_item)
@@ -43,6 +56,9 @@ def news_edit(request, pk):
 @login_required
 @user_passes_test(is_staff_check)
 def news_delete(request, pk):
+    """
+    Deletes a news announcement.
+    """
     news_item = get_object_or_404(NewsAnnouncement, pk=pk)
     if request.method == 'POST':
         news_item.delete()
