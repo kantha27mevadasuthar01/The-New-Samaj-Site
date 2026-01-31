@@ -11,7 +11,7 @@ SECRET_KEY = 'django-insecure-reconstruction-key'
 
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['shreekantha27mevadasuthar.pythonanywhere.com', '127.0.0.1', 'localhost']
 
 INSTALLED_APPS = [
     'django.contrib.admin',
