@@ -142,14 +142,18 @@
                 </div>
                 <script>
                     document.addEventListener('DOMContentLoaded', function () {
+                        // Select all toast messages
                         const toasts = document.querySelectorAll('.toast-message');
                         toasts.forEach(toast => {
+                            // Set a timeout to dismiss the toast
                             setTimeout(() => {
+                                // Fade out effect
                                 toast.style.opacity = '0';
                                 setTimeout(() => {
+                                    // Remove from DOM after fade out completes
                                     toast.remove();
-                                }, 500); // Wait for fade out
-                            }, 5000); // 5 seconds
+                                }, 500); // 500ms match the CSS transition duration
+                            }, 5000); // 5 seconds display time
                         });
                     });
                 </script>

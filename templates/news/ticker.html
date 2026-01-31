@@ -35,7 +35,9 @@
     document.addEventListener('DOMContentLoaded', function () {
         var tickerMove = document.querySelector('.ticker-move');
         if (tickerMove) {
+            // Retrieve speed from data attribute, defaulting to 30 seconds if not set
             var speed = tickerMove.getAttribute('data-speed') || '30';
+            // Apply the animation duration dynamically
             tickerMove.style.animationDuration = speed + 's';
         }
     });
