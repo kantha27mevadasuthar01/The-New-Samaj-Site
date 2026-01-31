@@ -6,7 +6,7 @@
         Announcements
     </div>
     <div class="ticker-wrap">
-        <div class="ticker-move" style="animation-duration: {{ speed }}s;">
+        <div class="ticker-move" data-speed="{{ speed }}">
             <div class="ticker-group">
                 {% for item in announcements %}
                 <div class="ticker-item">
@@ -31,4 +31,13 @@
     <button class="ticker-close"
         onclick="document.querySelector('.news-ticker-container').style.display='none';">&times;</button>
 </div>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var tickerMove = document.querySelector('.ticker-move');
+        if (tickerMove) {
+            var speed = tickerMove.getAttribute('data-speed') || '30';
+            tickerMove.style.animationDuration = speed + 's';
+        }
+    });
+</script>
 {% endif %}
