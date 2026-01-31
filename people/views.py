@@ -4,7 +4,6 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.http import HttpResponse
 from .models import Person, Family
-from .models import Person, Family
 from .forms import PersonForm
 from management.models import CommitteeMember
 from management.forms import AddToCommitteeForm
@@ -12,10 +11,17 @@ import pandas as pd
 from io import BytesIO
 
 def is_admin_or_subadmin(user):
+    """
+    Helper function to check if the user is an Admin or Sub-Admin.
+    """
     return user.is_authenticated and (user.role in ['ADMIN', 'SUB_ADMIN'] or user.is_superuser)
 
 @login_required
 def directory(request):
+    """
+    Displays the main People Directory list.
+    Handles searching, filtering by hometown, and displays committee availability.
+    """
     # Only members with explicit permission or admins can view
     if not request.user.can_view_directory and not is_admin_or_subadmin(request.user):
         messages.warning(request, "You do not have permission to view the People Directory. Please contact the administrator.")
@@ -26,15 +32,18 @@ def directory(request):
     
     people = Person.objects.select_related('family').all()
     
+    # Filter by search query (Name or Job)
     if query:
         people = people.filter(Q(full_name__icontains=query) | Q(job__icontains=query))
+    
+    # Filter by Hometown
     if hometown:
         people = people.filter(family__hometown__icontains=hometown)
         
     # Sorting: Hometown (alphabetical) then Full Name
     people = people.order_by('family__hometown', 'full_name')
 
-    # Committee info
+    # Committee info for dashboard widgets
     committee_full = CommitteeMember.is_committee_full()
     available_slots = CommitteeMember.get_available_slots()
         
@@ -49,12 +58,17 @@ def directory(request):
 
 @login_required
 def person_detail(request, pk):
+    """
+    Displays detailed information for a specific person, including their family members.
+    """
     if not request.user.can_view_directory and not is_admin_or_subadmin(request.user):
         messages.warning(request, "Permission denied.")
         return redirect('home')
         
     person = get_object_or_404(Person.objects.select_related('family'), pk=pk)
     family_members = []
+    
+    # Fetch other members of the same family
     if person.family:
         family_members = person.family.members.all().exclude(pk=person.pk)
         
@@ -66,6 +80,11 @@ def person_detail(request, pk):
 
 @login_required
 def add_person(request):
+    """
+    Allows Admins to add a new person to the directory.
+    - Automatically creates a new Family if the person is designated as 'Head of Family'.
+    - Logs the action in the Audit Log.
+    """
     if not is_admin_or_subadmin(request.user):
         messages.error(request, "Only Administrators can add people to the directory.")
         return redirect('people_directory')
@@ -75,13 +94,15 @@ def add_person(request):
         if form.is_valid():
             person = form.save(commit=False)
             
+            # Special handling for Head of Family
             if person.is_head:
-                # Create or update family with hometown
+                # Create or update family with hometown logic
                 hometown = form.cleaned_data.get('hometown')
                 family = Family.objects.create(hometown=hometown)
                 person.family = family
                 person.relation_with_head = 'HEAD'
                 person.save()
+                # Update family head reference
                 family.head = person
                 family.save()
             else:
@@ -104,6 +125,11 @@ def add_person(request):
 
 @login_required
 def edit_person(request, pk):
+    """
+    Allows Admins to edit an existing person's profile.
+    - Updates Family details if the person is the Head.
+    - Logs the action.
+    """
     if not is_admin_or_subadmin(request.user):
         messages.error(request, "Only Administrators can edit directory entries.")
         return redirect('people_directory')
@@ -115,6 +141,7 @@ def edit_person(request, pk):
         if form.is_valid():
             person = form.save(commit=False)
             
+            # Update Family info if this person is the Head
             if person.is_head:
                 hometown = form.cleaned_data.get('hometown')
                 if person.family:
@@ -145,6 +172,9 @@ def edit_person(request, pk):
 
 @login_required
 def delete_person(request, pk):
+    """
+    Allows Admins to soft-delete or remove a person from the directory.
+    """
     if not is_admin_or_subadmin(request.user):
         messages.error(request, "Only Administrators can delete directory entries.")
         return redirect('people_directory')
@@ -159,6 +189,10 @@ def delete_person(request, pk):
 
 @login_required
 def download_directory(request):
+    """
+    Generates and downloads an Excel file containing all directory data.
+    Restricted to Admins.
+    """
     if not is_admin_or_subadmin(request.user):
         messages.error(request, "Only Administrators can download the directory.")
         return redirect('people_directory')
@@ -197,6 +231,10 @@ def download_directory(request):
 
 @login_required
 def add_to_committee(request, person_pk):
+    """
+    Promotes a person from the directory to the Executive Committee.
+    Checks for committee capacity limits before adding.
+    """
     if not is_admin_or_subadmin(request.user):
         messages.error(request, "Permission denied.")
         return redirect('people_directory')

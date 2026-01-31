@@ -1,6 +1,10 @@
 from django.db import models
 
 class Family(models.Model):
+    """
+    Represents a family unit in the community.
+    Grouped by hometown, with one person designated as the head of the family.
+    """
     hometown = models.CharField(max_length=100, verbose_name="Home Town")
     head = models.ForeignKey('Person', on_delete=models.SET_NULL, null=True, blank=True, related_name='headed_family')
     
@@ -13,6 +17,10 @@ class Family(models.Model):
         ordering = ['hometown']
 
 class Person(models.Model):
+    """
+    Represents an individual member of the community.
+    Stores personal details, family relations, educational and professional info.
+    """
     RELATION_CHOICES = [
         ('HEAD', 'Head of Family'),
         ('SPOUSE', 'Spouse'),
@@ -49,6 +57,7 @@ class Person(models.Model):
         ('OTHER', 'Other'),
     ]
 
+    # Personal Information
     photo = models.ImageField(upload_to='people_photos/', blank=True, null=True)
     full_name = models.CharField(max_length=200, verbose_name="Full Name")
     relation_with_head = models.CharField(max_length=20, choices=RELATION_CHOICES, default='OTHER')
@@ -65,6 +74,7 @@ class Person(models.Model):
     job = models.CharField(max_length=200, blank=True, verbose_name="Job/Profession")
     mobile_number = models.CharField(max_length=15, blank=True)
     
+    # Family Linkage
     family = models.ForeignKey(Family, on_delete=models.CASCADE, related_name='members', null=True, blank=True)
     
     # For grandchildren logic: link a person to their parent who is a child in this family
