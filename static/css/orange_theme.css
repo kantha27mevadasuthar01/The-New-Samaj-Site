@@ -946,3 +946,36 @@ button:hover .far,
         transform: translate3d(0, 0, 0);
     }
 }
+
+/* Home Page Hero Section */
+.home-hero {
+    text-align: center;
+    padding: 4rem 0;
+    background: linear-gradient(135deg, #FFF3E0 0%, #FFFFFF 100%);
+    border-radius: 20px;
+    transition: all 0.4s ease;
+}
+
+.home-hero h1 {
+    color: var(--primary-color);
+}
+
+.home-hero p {
+    color: #666;
+}
+
+/* Dark Mode Hero - The Requested Effect */
+[data-theme="dark"] .home-hero {
+    background: var(--gradient-primary);
+    box-shadow: 0 10px 30px rgba(156, 39, 176, 0.3);
+    /* Glow effect */
+}
+
+[data-theme="dark"] .home-hero h1 {
+    color: #FFFFFF !important;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+[data-theme="dark"] .home-hero p {
+    color: rgba(255, 255, 255, 0.9) !important;
+}
