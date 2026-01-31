@@ -2,6 +2,10 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 
 class CommitteeSettings(models.Model):
+    """
+    Stores global settings for the committee, such as the current term years.
+    This model should typically have only one instance.
+    """
     start_year = models.PositiveIntegerField(_("Start Year"), default=2025)
     end_year = models.PositiveIntegerField(_("End Year"), default=2026)
 
@@ -13,6 +17,10 @@ class CommitteeSettings(models.Model):
         return f"Term: {self.start_year} - {self.end_year}"
 
 class CommitteeMember(models.Model):
+    """
+    Represents a member of the Executive Committee.
+    Includes predefined positions with limits on the number of members per position.
+    """
     POSITIONS = [
         ('PRAMUKH', _('Pramukh')),
         ('UP_PRAMUKH', _('Up-pramukh')),

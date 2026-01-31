@@ -5,6 +5,10 @@ from .models import CommitteeMember, CommitteeSettings
 from .forms import CommitteeMemberForm, CommitteeSettingsForm
 
 def committee_list(request):
+    """
+    Displays the list of committee members and the current term settings.
+    This is a public view.
+    """
     members = CommitteeMember.objects.all()
     settings = CommitteeSettings.objects.first()
     return render(request, 'management/committee_list.html', {
@@ -13,10 +17,17 @@ def committee_list(request):
     })
 
 def is_admin(user):
+    """
+    Check if user has administrative privileges.
+    """
     return user.is_authenticated and (user.role in ['ADMIN', 'SUB_ADMIN'] or user.is_superuser)
 
 @user_passes_test(is_admin)
 def committee_settings_update(request):
+    """
+    Calculates and updates committee term settings (Start/End Year).
+    Limited to Admins.
+    """
     settings = CommitteeSettings.objects.first()
     if not settings:
         settings = CommitteeSettings.objects.create()
@@ -37,6 +48,9 @@ def committee_settings_update(request):
 
 @user_passes_test(is_admin)
 def committee_create(request):
+    """
+    Manually creates a new committee member.
+    """
     if request.method == 'POST':
         form = CommitteeMemberForm(request.POST)
         if form.is_valid():
@@ -49,6 +63,9 @@ def committee_create(request):
 
 @user_passes_test(is_admin)
 def committee_update(request, pk):
+    """
+    Updates an existing committee member's details.
+    """
     member = get_object_or_404(CommitteeMember, pk=pk)
     if request.method == 'POST':
         form = CommitteeMemberForm(request.POST, instance=member)
@@ -62,6 +79,9 @@ def committee_update(request, pk):
 
 @user_passes_test(is_admin)
 def committee_delete(request, pk):
+    """
+    Removes a member from the committee.
+    """
     member = get_object_or_404(CommitteeMember, pk=pk)
     if request.method == 'POST':
         member.delete()
