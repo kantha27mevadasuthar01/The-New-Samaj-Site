@@ -39,7 +39,8 @@
         <div style="display: flex; flex-direction: column; gap: 2rem;">
             <!-- Purpose -->
             <div class="glass-card">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                <div
+                    style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; border-bottom: 2px solid var(--secondary-color); padding-bottom: 10px;">
                     <h3 style="color: var(--primary-color); margin: 0;">Our Purpose</h3>
                     {% if user.is_staff and purpose %}
                     <a href="{% url 'kantha_admin:core_samajinformation_change' purpose.id %}"
@@ -49,15 +50,16 @@
                     {% endif %}
                 </div>
                 {% if purpose %}
-                <p>{{ purpose.content }}</p>
+                <p style="color: #000;">{{ purpose.content }}</p>
                 {% else %}
-                <p>To unite all 27 gam members.</p>
+                <p style="color: #000;">To unite all 27 gam members.</p>
                 {% endif %}
             </div>
 
             <!-- Values -->
             <div class="glass-card">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                <div
+                    style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; border-bottom: 2px solid var(--secondary-color); padding-bottom: 10px;">
                     <h3 style="color: var(--primary-color); margin: 0;">Core Values</h3>
                     {% if user.is_staff and values %}
                     <a href="{% url 'kantha_admin:core_samajinformation_change' values.id %}"
@@ -67,9 +69,9 @@
                     {% endif %}
                 </div>
                 {% if values %}
-                <p>{{ values.content }}</p>
+                <p style="color: #000;">{{ values.content }}</p>
                 {% else %}
-                <p>Unity, Seva, Spirituality.</p>
+                <p style="color: #000;">Unity, Seva, Spirituality.</p>
                 {% endif %}
             </div>
         </div>
