@@ -134,12 +134,25 @@
                 {% if messages %}
                 <div class="toast-container" style="position: fixed; top: 100px; right: 20px; z-index: 9999;">
                     {% for message in messages %}
-                    <div
-                        style="background: var(--glass-bg); backdrop-filter: blur(5px); color: var(--text-color); padding: 1rem; margin-bottom: 1rem; border-left: 5px solid var(--primary-color); box-shadow: var(--shadow-lg); border-radius: 4px;">
+                    <div class="toast-message"
+                        style="background: var(--glass-bg); backdrop-filter: blur(5px); color: var(--text-color); padding: 1rem; margin-bottom: 1rem; border-left: 5px solid var(--primary-color); box-shadow: var(--shadow-lg); border-radius: 4px; transition: opacity 0.5s ease;">
                         {{ message }}
                     </div>
                     {% endfor %}
                 </div>
+                <script>
+                    document.addEventListener('DOMContentLoaded', function () {
+                        const toasts = document.querySelectorAll('.toast-message');
+                        toasts.forEach(toast => {
+                            setTimeout(() => {
+                                toast.style.opacity = '0';
+                                setTimeout(() => {
+                                    toast.remove();
+                                }, 500); // Wait for fade out
+                            }, 5000); // 5 seconds
+                        });
+                    });
+                </script>
                 {% endif %}
 
                 {% block content %}
